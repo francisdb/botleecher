@@ -39,6 +39,7 @@ import javax.swing.JSpinner;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
@@ -54,6 +55,7 @@ import org.jibble.pircbot.*;
 public class BotLeecher extends JFrame implements BotListener{
     
     private JButton btnConnect;
+    private JButton btnStop;
     private JButton btnStart;
     private JLabel lblStartAt;
     private JLabel transferLabel;
@@ -84,6 +86,8 @@ public class BotLeecher extends JFrame implements BotListener{
         btnConnect = new JButton(new ActionConnect());
         btnStart = new JButton(new ActionStart());
         btnStart.setEnabled(false);
+        btnStop = new JButton(new ActionStop());
+        btnStop.setEnabled(false);
         
         List<String> items = new ArrayList<String>();
         items.add("Connect first");
@@ -98,8 +102,7 @@ public class BotLeecher extends JFrame implements BotListener{
         
         lblStartAt = new JLabel();
         lblStartAt.setText("Start at nr:");
-        sStartAt = new JSpinner();
-        sStartAt.setValue(new Integer(1));
+        sStartAt = new JSpinner(new SpinnerNumberModel(1,1,9999,1));
         txtServer = new JTextField(20);
         txtServer.setText("irc.efnet.net");
         txtChannel = new JTextField(15);
@@ -118,6 +121,7 @@ public class BotLeecher extends JFrame implements BotListener{
         panelButtons.add(lblStartAt);
         panelButtons.add(sStartAt);
         panelButtons.add(btnStart);
+        panelButtons.add(btnStop);
         
         this.getContentPane().add(panelButtons,BorderLayout.NORTH);
         
@@ -148,6 +152,7 @@ public class BotLeecher extends JFrame implements BotListener{
     }
     
     private void start(){
+        btnStart.setEnabled(false);
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fileChooser.setMultiSelectionEnabled(false);
@@ -156,7 +161,6 @@ public class BotLeecher extends JFrame implements BotListener{
         
         botLeecher.setSavePath(fileChooser.getSelectedFile().getPath()+File.separator);
         lstNicknames.setEnabled(false);
-        btnStart.setEnabled(false);
         botLeecher.setCounter(Integer.parseInt(sStartAt.getValue().toString()));
         
         User selectedUser = (User)lstNicknames.getSelectedValue();
@@ -164,10 +168,12 @@ public class BotLeecher extends JFrame implements BotListener{
         updater = new Timer(500,new UpdateListerner());
         updater.setCoalesce(true);
         updater.start();
+        btnStop.setEnabled(true);
     }
     
     private void stop(){
-        updater.stop();
+        btnStop.setEnabled(false);
+        botLeecher.disconnect();
     }
     
     /**
@@ -315,6 +321,17 @@ public class BotLeecher extends JFrame implements BotListener{
         
         public void actionPerformed(ActionEvent e) {
             start();
+        }
+    }
+    
+    private class ActionStop extends AbstractAction{
+
+        public ActionStop() {
+            super("Stop");
+        }
+        
+        public void actionPerformed(ActionEvent e) {
+            stop();
         }
     }
     
