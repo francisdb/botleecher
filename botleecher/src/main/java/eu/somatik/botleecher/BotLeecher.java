@@ -51,7 +51,7 @@ import org.jdesktop.swingworker.SwingWorker;
 
 import org.jibble.pircbot.*;
 
-public class BotLeecher extends JFrame {
+public class BotLeecher extends JFrame implements BotListener{
     
     private JButton btnConnect;
     private JButton btnStart;
@@ -72,6 +72,7 @@ public class BotLeecher extends JFrame {
     /** Creates new form mainFrame */
     public BotLeecher() {
         botLeecher = new BotConnection();
+        botLeecher.addBotListener(this);
         initComponents();
         
     }
@@ -80,15 +81,15 @@ public class BotLeecher extends JFrame {
         this.setTitle("BotLeecher");
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         
-        btnConnect = new JButton(new ActionConnect(this));
-        btnStart = new JButton(new ActionStart(this));
+        btnConnect = new JButton(new ActionConnect());
+        btnStart = new JButton(new ActionStart());
         btnStart.setEnabled(false);
         
         List<String> items = new ArrayList<String>();
         items.add("Connect first");
         lstNicknames = new JList(items.toArray());
         lstNicknames.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        //lstNicknames.setVisibleRowCount(10);
+        lstNicknames.addListSelectionListener(new myListSelectionListener());
         
         JScrollPane scrollNicks = new JScrollPane(lstNicknames);
         scrollNicks.setPreferredSize(new Dimension(150,500));
@@ -106,8 +107,6 @@ public class BotLeecher extends JFrame {
         txtLog = new JTextArea("Connect first");
         txtLog.setEditable(false);
         JScrollPane scrollLog = new JScrollPane(txtLog);
-        //AbstractDocument pDoc=(AbstractDocument)txtLog.getDocument();
-        //pDoc.setDocumentFilter(new DocumentSizeFilter(1000));
         
         this.getContentPane().setLayout(new BorderLayout());
         
@@ -162,7 +161,7 @@ public class BotLeecher extends JFrame {
         
         User selectedUser = (User)lstNicknames.getSelectedValue();
         botLeecher.leechBot(selectedUser.getNick());
-        updater = new Timer(100,new UpdateListerner());
+        updater = new Timer(500,new UpdateListerner());
         updater.setCoalesce(true);
         updater.start();
     }
@@ -193,50 +192,57 @@ public class BotLeecher extends JFrame {
         });
     }
     
-    private class ConnectWorker extends SwingWorker<User[],String>{
+    public void userListLoaded(String channel, final User[] users) {
+        Arrays.sort(users, new UserComparator());
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                lstNicknames.setListData(users);
+            }
+        });
+    }
+    
+    private void setConnectPossible(boolean state){
+        btnConnect.setEnabled(state);
+        txtServer.setEnabled(state);
+        txtChannel.setEnabled(state);
+    }
+    
+    private class ConnectWorker extends SwingWorker<String,String>{
         private final String server;
         private final String channel;
         public ConnectWorker(){
+            setConnectPossible(false);
             server = txtServer.getText();
             channel = txtChannel.getText();
             transferLabel.setText("Connecting to " + server);
         }
         
-        protected User[] doInBackground() throws Exception {
+        protected String doInBackground() throws Exception {
             botLeecher.connect(server);
             publish("Joining channel " + channel);
             botLeecher.joinChannel(channel);
-             publish("Loading channel list ");
-            while (botLeecher.getChannels().length == 0){
-                Thread.sleep(100);
-            }
-             publish("Loading user list ");
-            while (botLeecher.getUsers(channel).length <= 1){
-                Thread.sleep(100);
-            }
-            return botLeecher.getUsers(channel);
+            return null;
         }
         
         protected void process(List<String> messages) {
-           for(String msg:messages){
-            transferLabel.setText(msg);
-           }
+            for(String msg:messages){
+                transferLabel.setText(msg);
+            }
         }
         
         protected void done() {
             try {
-                lstNicknames.setListData(get());
-                btnConnect.setEnabled(false);
-                txtChannel.setEnabled(false);
-                txtServer.setEnabled(false);
+                get();
             } catch (ExecutionException ex) {
+                setConnectPossible(true);
                 JOptionPane.showMessageDialog(BotLeecher.this,ex.getCause().getMessage(),"error",JOptionPane.ERROR_MESSAGE);
                 ex.getCause().printStackTrace();
             } catch (InterruptedException ex) {
+                setConnectPossible(true);
                 JOptionPane.showMessageDialog(BotLeecher.this,ex.getMessage(),"error",JOptionPane.ERROR_MESSAGE);
                 ex.printStackTrace();
             }
-            lstNicknames.addListSelectionListener(new myListSelectionListener());
+            
         }
         
     }
@@ -292,7 +298,7 @@ public class BotLeecher extends JFrame {
     
     
     private class ActionConnect extends AbstractAction{
-        public ActionConnect(BotLeecher parent) {
+        public ActionConnect() {
             super("Connect");
         }
         
@@ -302,11 +308,9 @@ public class BotLeecher extends JFrame {
     }
     
     private class ActionStart extends AbstractAction{
-        private BotLeecher parent;
-        
-        public ActionStart(BotLeecher parent) {
+
+        public ActionStart() {
             super("Start");
-            this.parent = parent;
         }
         
         public void actionPerformed(ActionEvent e) {
