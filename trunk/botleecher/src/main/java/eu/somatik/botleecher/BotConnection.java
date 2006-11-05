@@ -1,7 +1,10 @@
 package eu.somatik.botleecher;
 
 
+import java.beans.PropertyChangeSupport;
 import java.io.File;
+import java.util.List;
+import java.util.Vector;
 
 import org.jibble.pircbot.*;
 
@@ -9,7 +12,7 @@ import org.jibble.pircbot.*;
  *
  * @author francisdb
  */
-public class BotConnection extends PircBot {
+public class BotConnection extends PircBot{
     
     private static final String[] NICKS={"spidaboy","slickerz","dumpoli","moeha","catonia","pipolipo","omgsize",
     "toedter","skyhigh","rumsound","mathboy","shaderz","poppp","roofly","ruloman","seenthis","tiptopi",
@@ -22,11 +25,25 @@ public class BotConnection extends PircBot {
     private String lastMessage;
     private String savePath=null;
     
+    private final List<BotListener> listeners;
+    
+    private PropertyChangeSupport propertyChangeSupport;
+    
     /** Creates a new instance of Main */
     public BotConnection() {
+        super();
+        listeners = new Vector<BotListener>();
         this.setName(createRandomNick());
         this.setAutoNickChange(true);
         this.setVerbose(true);
+    }
+    
+    public void addBotListener(BotListener listener){
+        listeners.add(listener);
+    }
+    
+    public void removeBotListener(BotListener listener){
+        listeners.remove(listener);
     }
     
     private String createRandomNick(){
@@ -79,6 +96,13 @@ public class BotConnection extends PircBot {
         
     }
     
+    
+    protected void onUserList(String channel, User[] users) {
+        for(BotListener listener:listeners){
+            listener.userListLoaded(channel, users);
+        }
+    }
+    
     private void requestNext(){
         counter++;
         if(!finished)
@@ -86,8 +110,6 @@ public class BotConnection extends PircBot {
         else
             curentTransfer=null;
     }
-    
-    
     
     public void leechBot(String botName){
         this.botName=botName;
@@ -118,5 +140,6 @@ public class BotConnection extends PircBot {
     protected void onDisconnect() {
         System.out.println("DISCONNECT:\tDisconnected from server");
     }
+    
     
 }
