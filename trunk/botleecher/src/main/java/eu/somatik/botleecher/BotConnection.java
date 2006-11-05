@@ -4,19 +4,16 @@ package eu.somatik.botleecher;
 import java.io.File;
 
 import org.jibble.pircbot.*;
+
 /**
  *
- * @author fdb
+ * @author francisdb
  */
-
-
-
-
 public class BotConnection extends PircBot {
     
     private static final String[] NICKS={"spidaboy","slickerz","dumpoli","moeha","catonia","pipolipo","omgsize",
-            "toedter","skyhigh","rumsound","mathboy","shaderz","poppp","roofly","ruloman","seenthis","tiptopi",
-            "dreamoff","supergaai","appeltje","izidor","tantila","artbox","doedoe","almari","sikaru","lodinka"};
+    "toedter","skyhigh","rumsound","mathboy","shaderz","poppp","roofly","ruloman","seenthis","tiptopi",
+    "dreamoff","supergaai","appeltje","izidor","tantila","artbox","doedoe","almari","sikaru","lodinka"};
     
     private int counter=1;
     private String botName;
@@ -27,17 +24,17 @@ public class BotConnection extends PircBot {
     
     /** Creates a new instance of Main */
     public BotConnection() {
-        this.setName(getRandomNick());
+        this.setName(createRandomNick());
         this.setAutoNickChange(true);
         this.setVerbose(true);
     }
     
-    private String getRandomNick(){
+    private String createRandomNick(){
         return NICKS[(int)(Math.random()*NICKS.length)];
     }
     
     public void onMessage(String channel, String sender,
-           String login, String hostname, String message) {
+            String login, String hostname, String message) {
         if (message.equalsIgnoreCase("time")) {
             String time = new java.util.Date().toString();
             sendMessage(channel, sender + ": The time is now " + time);
@@ -79,7 +76,7 @@ public class BotConnection extends PircBot {
         if (ex!=null)
             System.out.println(ex.getClass().getName()+" -> "+ex.getMessage());
         requestNext();
-      
+        
     }
     
     private void requestNext(){
@@ -87,8 +84,10 @@ public class BotConnection extends PircBot {
         if(!finished)
             this.leechBot(botName);
         else
-            curentTransfer=null;  
+            curentTransfer=null;
     }
+    
+    
     
     public void leechBot(String botName){
         this.botName=botName;
@@ -115,9 +114,8 @@ public class BotConnection extends PircBot {
         this.savePath = savePath;
         System.out.println("saving to "+savePath);
     }
-        
+    
     protected void onDisconnect() {
-        //JOptionPane.showMessageDialog(parent,"Disconnected from server");
         System.out.println("DISCONNECT:\tDisconnected from server");
     }
     
