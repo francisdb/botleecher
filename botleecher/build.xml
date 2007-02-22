@@ -2,9 +2,11 @@
 <!-- You may freely edit this file. See commented blocks below for -->
 <!-- some examples of how to customize the build. -->
 <!-- (If you delete it and reopen the project it will be recreated.) -->
-<project name="botleecher" default="default" basedir=".">
+<project basedir="." default="default" name="botleecher">
     <description>Builds, tests, and runs the project botleecher.</description>
     <import file="nbproject/build-impl.xml"/>
+    <import file="nbproject/jnlp-impl.xml"/>
+    <target depends="jnlp" name="-post-jar"/>
     <!--
 
     There exist several targets which are by default empty and which can be 
