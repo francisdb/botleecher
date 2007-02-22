@@ -111,6 +111,7 @@ public class LeecherFrame extends javax.swing.JFrame {
 
         botListPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Bots"));
 
+        botList.setToolTipText("Doubleclick to open a bot connection");
         botList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 botListMouseClicked(evt);
