@@ -50,6 +50,7 @@ public class LeecherFrame extends javax.swing.JFrame {
         botList = new javax.swing.JList();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Botleecher");
 
         logTextArea.setColumns(20);
         logTextArea.setRows(5);
@@ -157,7 +158,7 @@ public class LeecherFrame extends javax.swing.JFrame {
                     .addComponent(botListPanel, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(serverPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -168,7 +169,9 @@ private void botListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     if(evt.getClickCount() == 2){
         User user = (User)botList.getSelectedValue();
         if(user != null){
-            BotPanel botPanel = new BotPanel(mediator, user);
+            BotLeecher botLeecher = mediator.getIcrConnection().makeLeecher(user);
+
+            BotPanel botPanel = new BotPanel(botLeecher, user);
             tabbedPane.addTab(user.getNick(), botPanel);
         }
     }
