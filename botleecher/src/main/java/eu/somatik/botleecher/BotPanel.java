@@ -9,6 +9,7 @@ package eu.somatik.botleecher;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
+import javax.swing.JFileChooser;
 import javax.swing.Timer;
 import org.jibble.pircbot.User;
 
@@ -19,17 +20,17 @@ import org.jibble.pircbot.User;
 public class BotPanel extends javax.swing.JPanel {
     
     private final User user;
-    private final BotMediator mediator;
+    private final BotLeecher botLeecher;
     private Timer updater;
     
     /** Creates new form botPanel
-     * @param mediator
+     * @param botLeecher
      * @param user
      */
-    public BotPanel(final BotMediator mediator, final User user) {
+    public BotPanel( BotLeecher botLeecher, final User user) {
         initComponents();
         this.user = user;
-        this.mediator = mediator;
+        this.botLeecher = botLeecher;
     }
     
     /** This method is called from within the constructor to
@@ -89,47 +90,58 @@ public class BotPanel extends javax.swing.JPanel {
     
 private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
     startButton.setEnabled(false);
-    mediator.start(user, (Integer)packSpinner.getValue());
+    
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    fileChooser.setMultiSelectionEnabled(false);
+    fileChooser.setDialogTitle("Where do you want to save the downloaded files?");
+    fileChooser.showDialog(this, "select");
+    
+    
+    botLeecher.setSavePath(fileChooser.getSelectedFile().getPath() +
+            java.io.File.separator);
+    botLeecher.setCounter((Integer)packSpinner.getValue());
+    botLeecher.start();
+    
     updater = new Timer(500, new UpdateListerner());
     updater.setCoalesce(true);
     updater.start();
 }//GEN-LAST:event_startButtonActionPerformed
 
-    private class UpdateListerner implements ActionListener {
-        private final NumberFormat formatter;
-
-        public UpdateListerner() {
-            formatter = NumberFormat.getInstance();
-            formatter.setMaximumFractionDigits(0);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            IrcConnection botLeecher = mediator.getIcrConnection();
-            if (botLeecher.getCurrentTransfer() != null) {
-                packSpinner.setValue(new Integer(botLeecher.getCounter()));
-                transferStatusBar.setMaximum((int) botLeecher.getCurrentTransfer()
-                                                      .getSize());
-                transferStatusBar.setValue((int) botLeecher.getCurrentTransfer()
-                                                    .getProgress());
-                transferStatusBar.setString((int) botLeecher.getCurrentTransfer()
-                                                     .getProgressPercentage() +
+private class UpdateListerner implements ActionListener {
+    private final NumberFormat formatter;
+    
+    public UpdateListerner() {
+        formatter = NumberFormat.getInstance();
+        formatter.setMaximumFractionDigits(0);
+    }
+    
+    public void actionPerformed(ActionEvent e) {
+        if (botLeecher.getCurrentTransfer() != null) {
+            packSpinner.setValue(new Integer(botLeecher.getCounter()));
+            transferStatusBar.setMaximum((int) botLeecher.getCurrentTransfer()
+                    .getSize());
+            transferStatusBar.setValue((int) botLeecher.getCurrentTransfer()
+                    .getProgress());
+            transferStatusBar.setString((int) botLeecher.getCurrentTransfer()
+                    .getProgressPercentage() +
                     " %");
-                botTextPane.setText(botLeecher.getCurrentTransfer().getFile().getName() +
+            botTextPane.setText(botLeecher.getCurrentTransfer().getFile().getName() +
                     "\n" +
                     (int) (botLeecher.getCurrentTransfer().getTransferRate() / 1024) +
                     "Kbps \n" + "Last notice: " +
-                    botLeecher.getLastMessage());
-
-                String percentage = formatter.format(botLeecher.getCurrentTransfer()
-                                                               .getProgressPercentage());
-//                setTitle(percentage + "% " +
-//                    botLeecher.getCurrentTransfer().getFile().getName());
-            } else {
-                transferStatusBar.setValue(0);
-                botTextPane.setText("no transfer");
-            }
+                    botLeecher.getLastNotice());
+            
+            String percentage = formatter.format(botLeecher.getCurrentTransfer()
+                    .getProgressPercentage());
+            //                setTitle(percentage + "% " +
+            //                    botLeecher.getCurrentTransfer().getFile().getName());
+        } else {
+            transferStatusBar.setValue(0);
+            botTextPane.setText("no transfer");
         }
     }
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane botScrollPane;
