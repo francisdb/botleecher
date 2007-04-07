@@ -10,6 +10,9 @@
 package eu.somatik.botleecher;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jibble.pircbot.DccFileTransfer;
 import org.jibble.pircbot.User;
 
@@ -19,7 +22,7 @@ import org.jibble.pircbot.User;
  */
 public class BotLeecher {
     
-    private User user;
+    private User botUser;
     
     private String savePath;
     
@@ -27,22 +30,33 @@ public class BotLeecher {
     
     private boolean leeching;
     
+    private boolean listRequested;
+    
     private int counter = 1;
     
     private DccFileTransfer curentTransfer;
     
     private String lastNotice;
     
-    /** 
-     * Creates a new instance of BotLeecher 
-     * @param user 
-     * @param connection 
+    private File listFile;
+    
+    /**
+     * Creates a new instance of BotLeecher
+     * @param user
+     * @param connection
      */
     public BotLeecher(User user, IrcConnection connection) {
-        this.user = user;
+        this.botUser = user;
         this.connection = connection;
         this.leeching = false;
+        this.listRequested = false;
         this.lastNotice = "";
+        requestPackList();
+    }
+    
+    private void requestPackList(){
+        listRequested = true;
+        connection.sendMessage(botUser.getNick(), "XDCC SEND 1");
     }
     
     private void requestNext() {
@@ -56,43 +70,54 @@ public class BotLeecher {
     }
     
     
-        /**
+    /**
      *
      * @param transfer
      */
     public void onIncomingFileTransfer(DccFileTransfer transfer) {
-
-        curentTransfer = transfer;
         
-        File saveFile = new File(savePath + transfer.getFile().getName());
-        System.out.println("INCOMING:\t" + transfer.getFile().toString() + " " +
-                transfer.getSize() + " bytes");
-        
-        //if file exists cut one 8bytes off to make transfer go on
-        if (saveFile.exists() && (transfer.getSize() == saveFile.length())) {
-            System.out.println("EXISTS:\t try to close connection");
-            transfer.close();
-            requestNext();
+        if(listRequested){
+            try         {
+                listFile = java.io.File.createTempFile("list", botUser.getNick());
+                listFile.deleteOnExit();
+                transfer.receive(listFile, false);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }else{
+            curentTransfer = transfer;
             
-            //FileImageInputStream fis = new FileInputStream
-        } else {
-            System.out.println("SAVING TO:\t" + saveFile.toString());
-            transfer.receive(saveFile, true);
+            File saveFile = new File(savePath + transfer.getFile().getName());
+            System.out.println("INCOMING:\t" + transfer.getFile().toString() + " " +
+                    transfer.getSize() + " bytes");
+            
+            //if file exists cut one 8bytes off to make transfer go on
+            if (saveFile.exists() && (transfer.getSize() == saveFile.length())) {
+                System.out.println("EXISTS:\t try to close connection");
+                transfer.close();
+                requestNext();
+                
+                //FileImageInputStream fis = new FileInputStream
+            } else {
+                System.out.println("SAVING TO:\t" + saveFile.toString());
+                transfer.receive(saveFile, true);
+            }
         }
+        
     }
     
     /**
-     * 
-     * @param sourceNick 
-     * @param sourceLogin 
-     * @param sourceHostname 
-     * @param target 
-     * @param notice 
+     *
+     * @param sourceNick
+     * @param sourceLogin
+     * @param sourceHostname
+     * @param target
+     * @param notice
      */
     public void onNotice(String sourceNick, String sourceLogin,
             String sourceHostname, String target, String notice) {
         if (notice.contains("Invalid Pack Number")) {
-            System.out.println("DONE LEECHING BOT "+user.getNick());
+            System.out.println("DONE LEECHING BOT "+botUser.getNick());
             leeching = false;
         }
         
@@ -107,56 +132,58 @@ public class BotLeecher {
         lastNotice = notice;
     }
     
-        
+    
     /**
      *
-     * @param transfer 
+     * @param transfer
      * @param ex
      */
     public void onFileTransferFinished(DccFileTransfer transfer, Exception ex) {
-        System.out.println("FINISHED:\t Transfer finished");
-        
         if (ex != null) {
-            System.out.println(ex.getClass().getName() + " -> " +
-                    ex.getMessage());
+            System.out.println(ex.getClass().getName() + " -> " + ex.getMessage());
         }
-        
-        requestNext();
+        if(listRequested){
+            System.out.println("LIST:\t List received for "+transfer.getNick());
+            listRequested = false;
+        }else{
+            System.out.println("FINISHED:\t Transfer finished for "+transfer.getFile().getName());
+            requestNext();
+        }
     }
-
+    
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public boolean isLeeching() {
         return leeching;
     }
-
+    
     /**
-     * 
-     * @param connection 
+     *
+     * @param connection
      */
     public void setConnection(IrcConnection connection) {
         this.connection = connection;
     }
-
+    
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public IrcConnection getConnection() {
         return connection;
     }
-        /**
+    /**
      *
      * @param savePath
      */
     public void setSavePath(String savePath) {
         this.savePath = savePath;
-        System.out.println("saving to " + savePath+ " for bot "+user.getNick());
+        System.out.println("saving to " + savePath+ " for bot "+botUser.getNick());
     }
     
-        /**
+    /**
      *
      * @param counter
      */
@@ -181,17 +208,17 @@ public class BotLeecher {
     }
     
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public String getLastNotice() {
         return lastNotice;
     }
-
+    
     
     
     /**
-     * 
+     *
      */
     public void start(){
         leeching = true;
@@ -200,10 +227,10 @@ public class BotLeecher {
     
     /**
      *
-     * 
+     *
      */
     private void requestNextPack() {
-        connection.sendMessage(user.getNick(), "XDCC SEND " + counter);
+        connection.sendMessage(botUser.getNick(), "XDCC SEND " + counter);
     }
     
     

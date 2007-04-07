@@ -108,8 +108,10 @@ public class IrcConnection extends PircBot {
      */
     public void onNotice(String sourceNick, String sourceLogin,
             String sourceHostname, String target, String notice) {
-        leechers.get(sourceNick).onNotice(sourceNick, sourceLogin, sourceHostname, target, notice);
-
+        BotLeecher leecher = leechers.get(sourceNick);
+        if(leecher != null){
+            leechers.get(sourceNick).onNotice(sourceNick, sourceLogin, sourceHostname, target, notice);
+        }
     }
     
     /**

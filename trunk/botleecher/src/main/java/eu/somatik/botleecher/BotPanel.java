@@ -31,6 +31,7 @@ public class BotPanel extends javax.swing.JPanel {
         initComponents();
         this.user = user;
         this.botLeecher = botLeecher;
+        this.packSpinner.setValue(2);
     }
     
     /** This method is called from within the constructor to
