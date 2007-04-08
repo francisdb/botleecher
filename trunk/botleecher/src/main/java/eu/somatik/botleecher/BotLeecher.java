@@ -11,8 +11,8 @@ package eu.somatik.botleecher;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
+import java.util.Vector;
 import org.jibble.pircbot.DccFileTransfer;
 import org.jibble.pircbot.User;
 
@@ -23,6 +23,8 @@ import org.jibble.pircbot.User;
 public class BotLeecher {
     
     private User botUser;
+    
+    private String description;
     
     private String savePath;
     
@@ -40,6 +42,10 @@ public class BotLeecher {
     
     private File listFile;
     
+    private List<BotListener> listeners;
+   
+    
+    
     /**
      * Creates a new instance of BotLeecher
      * @param user
@@ -51,6 +57,8 @@ public class BotLeecher {
         this.leeching = false;
         this.listRequested = false;
         this.lastNotice = "";
+        this.description = "";
+        this.listeners = new Vector<BotListener>();
         requestPackList();
     }
     
@@ -107,6 +115,14 @@ public class BotLeecher {
     }
     
     /**
+     * 
+     * @param listener 
+     */
+    public void addListener(BotListener listener){
+        listeners.add(listener);
+    }
+    
+    /**
      *
      * @param sourceNick
      * @param sourceLogin
@@ -145,6 +161,13 @@ public class BotLeecher {
         if(listRequested){
             System.out.println("LIST:\t List received for "+transfer.getNick());
             listRequested = false;
+            PackListReader reader = new PackListReader(listFile);
+            for(String message:reader.getMessages()){
+                this.description  += message + "\n";
+            }
+            for(BotListener listener:listeners){
+                listener.packListLoaded(reader.getPacks());
+            }
         }else{
             System.out.println("FINISHED:\t Transfer finished for "+transfer.getFile().getName());
             requestNext();
@@ -215,6 +238,14 @@ public class BotLeecher {
         return lastNotice;
     }
     
+    /**
+     * 
+     * @return 
+     */
+    public String getDescription() {
+        return description;
+    }
+
     
     
     /**

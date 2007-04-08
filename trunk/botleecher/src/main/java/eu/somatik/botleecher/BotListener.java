@@ -1,17 +1,26 @@
+/*
+ * BotListener.java
+ *
+ * Created on April 8, 2007, 11:49 PM
+ *
+ * To change this template, choose Tools | Template Manager
+ * and open the template in the editor.
+ */
+
 package eu.somatik.botleecher;
 
-import org.jibble.pircbot.User;
-
+import eu.somatik.botleecher.model.Pack;
+import java.util.List;
 
 /**
- * 
+ *
  * @author francisdb
  */
 public interface BotListener {
+    
     /**
-     * 
-     * @param channel 
-     * @param users 
+     * Triggered when the pack list has been loaded
+     * @param packList 
      */
-    void userListLoaded(String channel, User[] users);
+    void packListLoaded(List<Pack> packList);
 }

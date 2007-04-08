@@ -1,0 +1,71 @@
+/*
+ * PackTableModel.java
+ *
+ * Created on April 8, 2007, 11:38 PM
+ *
+ * To change this template, choose Tools | Template Manager
+ * and open the template in the editor.
+ */
+
+package eu.somatik.botleecher.model;
+
+import java.util.List;
+import javax.swing.table.AbstractTableModel;
+
+/**
+ *
+ * @author francisdb
+ */
+public class PackTableModel extends AbstractTableModel{
+    
+    private static final String[] COL_NAMES = {"#", "Name", "Size (K)", "Downloads"};
+    private static final Class[] COL_TYPES = {Integer.class, String.class, Integer.class, Integer.class};
+    
+    private List<Pack> packs;
+    
+    /**
+     * Creates a new instance of PackTableModel
+     * @param packs
+     */
+    public PackTableModel(List<Pack> packs) {
+        this.packs = packs;
+    }
+    
+    public int getRowCount() {
+        return packs.size();
+    }
+    
+    public int getColumnCount() {
+        return COL_NAMES.length;
+    }
+    
+    @Override
+    public String getColumnName(int col) {
+        return COL_NAMES[col];
+    }
+    
+    @Override
+    public Class<?> getColumnClass(int col) {
+        return COL_TYPES[col];
+    }
+
+    
+
+    
+    
+    public Object getValueAt(int row, int col) {
+        switch(col){
+        case 0:
+            return packs.get(row).getId();
+        case 1:
+            return packs.get(row).getName();
+        case 2:
+            return packs.get(row).getSize();
+        case 3:
+            return packs.get(row).getDownloads();
+        default:
+            throw new AssertionError("Column "+col+" not defined");
+        }
+    }
+    
+}

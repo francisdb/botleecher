@@ -4,11 +4,15 @@
  * Created on February 22, 2007, 10:15 PM
  */
 
-package eu.somatik.botleecher;
+package eu.somatik.botleecher.gui;
 
+import eu.somatik.botleecher.*;
+import eu.somatik.botleecher.model.Pack;
+import eu.somatik.botleecher.model.PackTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
+import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.Timer;
 import org.jibble.pircbot.User;
@@ -17,7 +21,7 @@ import org.jibble.pircbot.User;
  *
  * @author  francisdb
  */
-public class BotPanel extends javax.swing.JPanel {
+public class BotPanel extends javax.swing.JPanel{
     
     private final User user;
     private final BotLeecher botLeecher;
@@ -31,6 +35,13 @@ public class BotPanel extends javax.swing.JPanel {
         initComponents();
         this.user = user;
         this.botLeecher = botLeecher;
+        this.botLeecher.addListener(new BotListener(){
+            public void packListLoaded(List<Pack> packList) {
+                packTable.setModel(new PackTableModel(packList));
+            }
+
+
+        });
         this.packSpinner.setValue(2);
     }
     
@@ -47,6 +58,8 @@ public class BotPanel extends javax.swing.JPanel {
         packSpinner = new javax.swing.JSpinner();
         startButton = new javax.swing.JButton();
         transferStatusBar = new javax.swing.JProgressBar();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        packTable = new javax.swing.JTable();
 
         botScrollPane.setViewportView(botTextPane);
 
@@ -59,19 +72,34 @@ public class BotPanel extends javax.swing.JPanel {
             }
         });
 
+        packTable.setAutoCreateRowSorter(true);
+        packTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(packTable);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(botScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(startButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(packSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(transferStatusBar, javax.swing.GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE))
+                    .addComponent(transferStatusBar, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
+                    .addComponent(botScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -82,7 +110,9 @@ public class BotPanel extends javax.swing.JPanel {
                     .addComponent(startButton)
                     .addComponent(packSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(botScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(botScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(transferStatusBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -127,7 +157,9 @@ private class UpdateListerner implements ActionListener {
             transferStatusBar.setString((int) botLeecher.getCurrentTransfer()
                     .getProgressPercentage() +
                     " %");
-            botTextPane.setText(botLeecher.getCurrentTransfer().getFile().getName() +
+            botTextPane.setText(
+                    botLeecher.getDescription()+"\n"+
+                    botLeecher.getCurrentTransfer().getFile().getName() +
                     "\n" +
                     (int) (botLeecher.getCurrentTransfer().getTransferRate() / 1024) +
                     "Kbps \n" + "Last notice: " +
@@ -147,7 +179,9 @@ private class UpdateListerner implements ActionListener {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane botScrollPane;
     private javax.swing.JTextPane botTextPane;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSpinner packSpinner;
+    private javax.swing.JTable packTable;
     private javax.swing.JButton startButton;
     private javax.swing.JProgressBar transferStatusBar;
     // End of variables declaration//GEN-END:variables

@@ -6,8 +6,10 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package eu.somatik.botleecher;
+package eu.somatik.botleecher.gui;
 
+import eu.somatik.botleecher.*;
+import eu.somatik.botleecher.gui.LeecherFrame;
 import java.awt.Cursor;
 import org.jibble.pircbot.User;
 import java.io.ByteArrayOutputStream;
@@ -24,7 +26,7 @@ import javax.swing.UIManager;
  *
  * @author francisdb
  */
-public class BotMediator implements BotListener {
+public class BotMediator implements IrcConnectionListener {
     private IrcConnection icrConnection;
     private LeecherFrame leecherFrame;
     
