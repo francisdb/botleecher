@@ -4,8 +4,11 @@
  * Created on February 22, 2007, 9:54 PM
  */
 
-package eu.somatik.botleecher;
+package eu.somatik.botleecher.gui;
 
+import eu.somatik.botleecher.gui.BotMediator;
+import eu.somatik.botleecher.*;
+import eu.somatik.botleecher.gui.BotPanel;
 import java.awt.Font;
 import javax.swing.JOptionPane;
 import org.jibble.pircbot.User;
@@ -107,7 +110,7 @@ public class LeecherFrame extends javax.swing.JFrame {
                     .addComponent(roomComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(connectButton)
-                .addContainerGap(54, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         botListPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Bots"));
@@ -132,7 +135,7 @@ public class LeecherFrame extends javax.swing.JFrame {
         botListPanelLayout.setVerticalGroup(
             botListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(botListPanelLayout.createSequentialGroup()
-                .addComponent(botListScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                .addComponent(botListScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -143,11 +146,11 @@ public class LeecherFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addComponent(tabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(serverPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(botListPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(tabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE))
+                        .addComponent(botListPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -155,10 +158,10 @@ public class LeecherFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(botListPanel, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(serverPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(serverPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(botListPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -185,7 +188,7 @@ private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN
  *
  * @param message
  */
-protected void writeToLog(String message){
+public void writeToLog(String message){
     logTextArea.append(message);
     logTextArea.setCaretPosition( logTextArea.getDocument().getLength() );
 }
@@ -229,7 +232,7 @@ protected void showException(String message){
  * Sets the user list, call this on the edt!
  * @param users 
  */
-protected void setUsers(User[] users){
+public void setUsers(User[] users){
     botList.setListData(users);
 }
 

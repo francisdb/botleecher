@@ -24,7 +24,7 @@ public class IrcConnection extends PircBot {
         "almari", "sikaru", "lodinka"
     };
     
-    private final List<BotListener> listeners;
+    private final List<IrcConnectionListener> listeners;
     private PropertyChangeSupport propertyChangeSupport;
     
     private Map<String,BotLeecher> leechers;
@@ -34,7 +34,7 @@ public class IrcConnection extends PircBot {
         super();
         
         this.leechers = Collections.synchronizedMap(new HashMap<String,BotLeecher>());
-        this.listeners = new Vector<BotListener>();
+        this.listeners = new Vector<IrcConnectionListener>();
         this.setName(createRandomNick());
         this.setAutoNickChange(true);
         this.setVerbose(true);
@@ -65,7 +65,7 @@ public class IrcConnection extends PircBot {
      *
      * @param listener
      */
-    public void addBotListener(BotListener listener) {
+    public void addBotListener(IrcConnectionListener listener) {
         listeners.add(listener);
     }
     
@@ -74,7 +74,7 @@ public class IrcConnection extends PircBot {
      *
      * @param listener
      */
-    public void removeBotListener(BotListener listener) {
+    public void removeBotListener(IrcConnectionListener listener) {
         listeners.remove(listener);
     }
     
@@ -138,7 +138,7 @@ public class IrcConnection extends PircBot {
      */
     protected void onUserList(String channel, User[] users) {
         Arrays.sort(users, new UserComparator());
-        for (BotListener listener : listeners) {
+        for (IrcConnectionListener listener : listeners) {
             listener.userListLoaded(channel, users);
         }
     }
