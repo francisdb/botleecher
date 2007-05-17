@@ -17,60 +17,59 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-    <groupId>pircbot</groupId>
-    <artifactId>pircbot</artifactId>
-    <version>1.4.2</version>
-</dependency>
-      
+            <groupId>pircbot</groupId>
+            <artifactId>pircbot</artifactId>
+            <version>1.4.2</version>
+        </dependency>
     </dependencies>
     
     <build>
         <defaultGoal>compile</defaultGoal>
         <pluginManagement>
             <plugins>
-    <!--  jnlp -->
-    <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>webstart-maven-plugin</artifactId>
-        <executions>
-            <execution>
-                <goals>
-                    <goal>jnlp</goal>
-                </goals>
-            </execution>
-        </executions>
-        <configuration>
-            <jnlp>
-                <inputTemplate>src/main/jnlp/template.vm.xml</inputTemplate>
-                <outputFile>moviebrowser.jnlp</outputFile>
-                <mainClass>eu.somatik.moviebrowser.MovieBrowser</mainClass>
-            </jnlp>
-            <sign>
-                <keystore>../../keystore.jks</keystore>
-                <keypass>moviepass</keypass>
-                <storepass>moviepass</storepass>
-                <storetype></storetype>
-                <alias>moviebrowser</alias>
-                <validity></validity>
-                
-                <dnameCn>Francis De Brabandere</dnameCn>
-                <dnameOu>somatik.eu</dnameOu>
-                <dnameO>moviebrowser</dnameO>
-                <dnameL></dnameL>
-                <dnameSt></dnameSt>
-                <dnameC>EU</dnameC>
-                <verify>true</verify>
-            </sign>
-            <keystore>
-                <delete>false</delete>
-                <gen>false</gen>
-            </keystore>
-            <gzip>true</gzip>
-            <verbose>false</verbose>
-        </configuration>
-    </plugin>
-    </plugins>
-</pluginManagement>
+                <!--  jnlp -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>webstart-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>jnlp</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <jnlp>
+                            <inputTemplate>src/main/jnlp/template.vm.xml</inputTemplate>
+                            <outputFile>botleecher.jnlp</outputFile>
+                            <mainClass>eu.somatik.botleecher.gui.BotMediator</mainClass>
+                        </jnlp>
+                        <sign>
+                            <keystore>../../keystore.jks</keystore>
+                            <keypass>moviepass</keypass>
+                            <storepass>moviepass</storepass>
+                            <storetype></storetype>
+                            <alias>moviebrowser</alias>
+                            <validity></validity>
+                            
+                            <dnameCn>Francis De Brabandere</dnameCn>
+                            <dnameOu>somatik.eu</dnameOu>
+                            <dnameO>moviebrowser</dnameO>
+                            <dnameL></dnameL>
+                            <dnameSt></dnameSt>
+                            <dnameC>EU</dnameC>
+                            <verify>true</verify>
+                        </sign>
+                        <keystore>
+                            <delete>false</delete>
+                            <gen>false</gen>
+                        </keystore>
+                        <gzip>true</gzip>
+                        <verbose>false</verbose>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -93,10 +92,54 @@
                 </executions>
                 
                 <configuration>
-                    <mainClass>eu.somatik.moviebrowser.MovieBrowser</mainClass>
+                    <mainClass>eeu.somatik.botleecher.gui.BotMediator</mainClass>
                 </configuration>
             </plugin>
         </plugins>
         
     </build>
+    
+    <profiles>
+        <profile>
+            <id>netbeans-public</id>
+            <activation>
+                <property>
+                    <name>netbeans.execution</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <addClasspath>true</addClasspath>
+                                    <classpathPrefix>lib</classpathPrefix>
+                                    <mainClass>eu.somatik.botleecher.gui.BotMediator</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>nb</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>directory</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptor>${basedir}/src/main/assemblies/netbeans-run.xml</descriptor>
+                                    <finalName>executable</finalName>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
