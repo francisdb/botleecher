@@ -18,8 +18,8 @@ import javax.swing.table.AbstractTableModel;
  */
 public class PackTableModel extends AbstractTableModel{
     
-    private static final String[] COL_NAMES = {"#", "Name", "Size (K)", "Downloads"};
-    private static final Class[] COL_TYPES = {Integer.class, String.class, Integer.class, Integer.class};
+    private static final String[] COL_NAMES = {"#", "Status", "Name", "Size (K)", "Downloads"};
+    private static final Class[] COL_TYPES = {Integer.class, PackStatus.class, String.class, Integer.class, Integer.class};
     
     private List<Pack> packs;
     
@@ -58,10 +58,12 @@ public class PackTableModel extends AbstractTableModel{
         case 0:
             return packs.get(row).getId();
         case 1:
-            return packs.get(row).getName();
+            return packs.get(row).getStatus();
         case 2:
-            return packs.get(row).getSize();
+            return packs.get(row).getName();
         case 3:
+            return packs.get(row).getSize();
+        case 4:
             return packs.get(row).getDownloads();
         default:
             throw new AssertionError("Column "+col+" not defined");
