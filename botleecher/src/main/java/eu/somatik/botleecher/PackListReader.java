@@ -106,7 +106,7 @@ public class PackListReader {
         }else if(suffix.equals("K")){
             multiplier = 1;
         }else{
-            throw new AssertionError("Unknown size suffix: "+suffix+" in "+sizePart);
+            System.err.println("Unknown size suffix: "+suffix+" in "+sizePart);
         }
         String size = clean.substring(0, clean.length() -1);
         int calculatedSIze = (int)(Double.parseDouble(size) * multiplier);
