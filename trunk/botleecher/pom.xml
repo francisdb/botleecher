@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    
+    <groupId>eu.somatik</groupId>
+    <artifactId>botleecher</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>botleecher</name>
+    <description>Tool to download from IRC bots</description>
+    <url>http://www.somatik.eu</url>
+    
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+    <groupId>pircbot</groupId>
+    <artifactId>pircbot</artifactId>
+    <version>1.4.2</version>
+</dependency>
+      
+    </dependencies>
+    
+    <build>
+        <defaultGoal>compile</defaultGoal>
+        <pluginManagement>
+            <plugins>
+    <!--  jnlp -->
+    <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>webstart-maven-plugin</artifactId>
+        <executions>
+            <execution>
+                <goals>
+                    <goal>jnlp</goal>
+                </goals>
+            </execution>
+        </executions>
+        <configuration>
+            <jnlp>
+                <inputTemplate>src/main/jnlp/template.vm.xml</inputTemplate>
+                <outputFile>moviebrowser.jnlp</outputFile>
+                <mainClass>eu.somatik.moviebrowser.MovieBrowser</mainClass>
+            </jnlp>
+            <sign>
+                <keystore>../../keystore.jks</keystore>
+                <keypass>moviepass</keypass>
+                <storepass>moviepass</storepass>
+                <storetype></storetype>
+                <alias>moviebrowser</alias>
+                <validity></validity>
+                
+                <dnameCn>Francis De Brabandere</dnameCn>
+                <dnameOu>somatik.eu</dnameOu>
+                <dnameO>moviebrowser</dnameO>
+                <dnameL></dnameL>
+                <dnameSt></dnameSt>
+                <dnameC>EU</dnameC>
+                <verify>true</verify>
+            </sign>
+            <keystore>
+                <delete>false</delete>
+                <gen>false</gen>
+            </keystore>
+            <gzip>true</gzip>
+            <verbose>false</verbose>
+        </configuration>
+    </plugin>
+    </plugins>
+</pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                
+                <configuration>
+                    <mainClass>eu.somatik.moviebrowser.MovieBrowser</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+        
+    </build>
+</project>
