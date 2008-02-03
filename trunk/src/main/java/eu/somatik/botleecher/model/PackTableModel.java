@@ -31,10 +31,12 @@ public class PackTableModel extends AbstractTableModel{
         this.packs = packs;
     }
     
+    @Override
     public int getRowCount() {
         return packs.size();
     }
     
+    @Override
     public int getColumnCount() {
         return COL_NAMES.length;
     }
@@ -50,9 +52,7 @@ public class PackTableModel extends AbstractTableModel{
     }
 
     
-
-    
-    
+    @Override
     public Object getValueAt(int row, int col) {
         switch(col){
         case 0:
@@ -68,6 +68,10 @@ public class PackTableModel extends AbstractTableModel{
         default:
             throw new AssertionError("Column "+col+" not defined");
         }
+    }
+    
+    public Pack getPack(int row){
+        return packs.get(row);
     }
     
 }
