@@ -9,6 +9,8 @@
 
 package eu.somatik.botleecher;
 
+import eu.somatik.botleecher.model.Pack;
+import eu.somatik.botleecher.model.PackStatus;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -25,8 +27,6 @@ public class BotLeecher {
     private User botUser;
     
     private String description;
-    
-    private String savePath;
     
     private IrcConnection connection;
     
@@ -94,8 +94,9 @@ public class BotLeecher {
             }
         }else{
             curentTransfer = transfer;
-            
-            File saveFile = new File(savePath + transfer.getFile().getName());
+            Settings settings = new Settings();
+            // TODO create subfolder per bot
+            File saveFile = new File(settings.getSaveFolder(), transfer.getFile().getName());
             System.out.println("INCOMING:\t" + transfer.getFile().toString() + " " +
                     transfer.getSize() + " bytes");
             
@@ -170,7 +171,9 @@ public class BotLeecher {
             }
         }else{
             System.out.println("FINISHED:\t Transfer finished for "+transfer.getFile().getName());
-            requestNext();
+            if(leeching){
+                requestNext();
+            }
         }
     }
     
@@ -196,14 +199,6 @@ public class BotLeecher {
      */
     public IrcConnection getConnection() {
         return connection;
-    }
-    /**
-     *
-     * @param savePath
-     */
-    public void setSavePath(String savePath) {
-        this.savePath = savePath;
-        System.out.println("saving to " + savePath+ " for bot "+botUser.getNick());
     }
     
     /**
@@ -256,12 +251,21 @@ public class BotLeecher {
         requestNextPack();
     }
     
+    public void requestPack(Pack pack){
+        pack.setStatus(PackStatus.QUEUED);
+        requestPack(pack.getId());
+    }
+    
+    public void requestPack(int nr){
+        connection.sendMessage(botUser.getNick(), "XDCC SEND " + nr);
+    }
+    
     /**
      *
      *
      */
     private void requestNextPack() {
-        connection.sendMessage(botUser.getNick(), "XDCC SEND " + counter);
+        requestPack(counter);
     }
     
     
