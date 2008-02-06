@@ -35,6 +35,7 @@ public class IrcConnection extends PircBot {
         
         this.leechers = Collections.synchronizedMap(new HashMap<String,BotLeecher>());
         this.listeners = new Vector<IrcConnectionListener>();
+        this.setLogin(createRandomNick());
         this.setName(createRandomNick());
         this.setAutoNickChange(true);
         this.setVerbose(true);

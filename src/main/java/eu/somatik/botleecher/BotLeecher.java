@@ -13,8 +13,14 @@ import eu.somatik.botleecher.model.Pack;
 import eu.somatik.botleecher.model.PackStatus;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jibble.pircbot.DccFileTransfer;
 import org.jibble.pircbot.User;
 
@@ -32,6 +38,8 @@ public class BotLeecher {
     
     private boolean leeching;
     
+    private boolean downloading;
+    
     private boolean listRequested;
     
     private int counter = 1;
@@ -43,6 +51,8 @@ public class BotLeecher {
     private File listFile;
     
     private List<BotListener> listeners;
+    
+    private final BlockingQueue<Pack> queue;
    
     
     
@@ -59,7 +69,9 @@ public class BotLeecher {
         this.lastNotice = "";
         this.description = "";
         this.listeners = new Vector<BotListener>();
+        this.queue = new LinkedBlockingQueue<Pack>();
         requestPackList();
+        new QueueThread().start();
     }
     
     private void requestPackList(){
@@ -72,8 +84,6 @@ public class BotLeecher {
         
         if (leeching) {
             requestNextPack();
-        } else {
-            curentTransfer = null;
         }
     }
     
@@ -146,6 +156,11 @@ public class BotLeecher {
             requestNext();
         }
         
+        if(notice.contains("Closing Connection: Pack file changed")){
+            // TODO do something here (retry?)
+            System.out.println("PACK file changed");
+        }
+        
         lastNotice = notice;
     }
     
@@ -159,6 +174,7 @@ public class BotLeecher {
         if (ex != null) {
             System.out.println(ex.getClass().getName() + " -> " + ex.getMessage());
         }
+        curentTransfer = null;
         if(listRequested){
             System.out.println("LIST:\t List received for "+transfer.getNick());
             listRequested = false;
@@ -166,11 +182,13 @@ public class BotLeecher {
             for(String message:reader.getMessages()){
                 this.description  += message + "\n";
             }
+            List<Pack> packs = Collections.unmodifiableList(reader.getPacks());
             for(BotListener listener:listeners){
-                listener.packListLoaded(reader.getPacks());
+                listener.packListLoaded(packs);
             }
         }else{
             System.out.println("FINISHED:\t Transfer finished for "+transfer.getFile().getName());
+            downloading = false;
             if(leeching){
                 requestNext();
             }
@@ -251,13 +269,29 @@ public class BotLeecher {
         requestNextPack();
     }
     
-    public void requestPack(Pack pack){
+    public void queuePack(Pack pack){
         pack.setStatus(PackStatus.QUEUED);
+        System.out.println("Queued pack nr "+pack.getId());
+        queue.add(pack);
+    }
+    
+    public void requestPack(Pack pack){
+        pack.setStatus(PackStatus.DOWNLOADING);
         requestPack(pack.getId());
+        pack.setStatus(PackStatus.DOWNLOADED);
     }
     
     public void requestPack(int nr){
+        connection.sendMessage(botUser.getNick(), "XDCC INFO " + nr);
         connection.sendMessage(botUser.getNick(), "XDCC SEND " + nr);
+        downloading = true;
+        while(downloading){
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(BotLeecher.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
     /**
@@ -266,6 +300,22 @@ public class BotLeecher {
      */
     private void requestNextPack() {
         requestPack(counter);
+    }
+    
+    private class QueueThread extends Thread{
+        @Override
+        public void run() {
+            boolean running = true;
+            while(running){
+                try {
+                    Pack pack = queue.take();
+                    requestPack(pack.getId());
+                } catch (InterruptedException ex) {
+                    running = false;
+                    Logger.getLogger(BotLeecher.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }
     
     
