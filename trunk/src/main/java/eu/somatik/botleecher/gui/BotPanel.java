@@ -8,6 +8,7 @@ package eu.somatik.botleecher.gui;
 
 import eu.somatik.botleecher.*;
 import eu.somatik.botleecher.model.Pack;
+import eu.somatik.botleecher.model.PackStatus;
 import eu.somatik.botleecher.model.PackTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -139,7 +140,11 @@ private void packTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         int modelRow = packTable.convertRowIndexToModel(row);
         PackTableModel model = (PackTableModel)packTable.getModel();
         Pack pack = model.getPack(modelRow);
-        botLeecher.requestPack(pack);
+        if(pack.getStatus() == PackStatus.AVAILABLE){
+            botLeecher.queuePack(pack);
+        }else{
+            System.err.println("Pack already queued or downloaded");
+        }
     }
 }//GEN-LAST:event_packTableMouseClicked
 
@@ -176,7 +181,7 @@ private class UpdateListerner implements ActionListener {
             //                    botLeecher.getCurrentTransfer().getFile().getName());
         } else {
             transferStatusBar.setValue(0);
-            botTextPane.setText("no transfer");
+            botTextPane.setText(botLeecher.getDescription()+"\n"+"no transfer");
         }
     }
 }
