@@ -14,4 +14,6 @@ public interface IrcConnectionListener {
      * @param users 
      */
     void userListLoaded(String channel, User[] users);
+    
+    void disconnected();
 }

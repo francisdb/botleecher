@@ -37,6 +37,8 @@ public class IrcConnection extends PircBot {
         this.listeners = new Vector<IrcConnectionListener>();
         this.setLogin(createRandomNick());
         this.setName(createRandomNick());
+        this.setFinger(createRandomNick());
+        this.setVersion("xxx");
         this.setAutoNickChange(true);
         this.setVerbose(true);
     }
@@ -156,5 +158,8 @@ public class IrcConnection extends PircBot {
      */
     protected void onDisconnect() {
         System.out.println("DISCONNECT:\tDisconnected from server");
+        for (IrcConnectionListener listener : listeners) {
+            listener.disconnected();
+        }
     }
 }

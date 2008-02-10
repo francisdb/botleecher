@@ -9,7 +9,6 @@
 package eu.somatik.botleecher.gui;
 
 import eu.somatik.botleecher.*;
-import eu.somatik.botleecher.gui.LeecherFrame;
 import java.awt.Cursor;
 import org.jibble.pircbot.User;
 import java.io.ByteArrayOutputStream;
@@ -164,5 +163,10 @@ public class BotMediator implements IrcConnectionListener {
             writeToLog(aString);
             oldStream.write(b, off, len);
         }
+    }
+
+    @Override
+    public void disconnected() {
+        leecherFrame.setContolsActivated(true);
     }
 }

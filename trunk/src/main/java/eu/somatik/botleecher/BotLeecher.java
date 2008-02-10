@@ -74,7 +74,7 @@ public class BotLeecher {
         new QueueThread().start();
     }
     
-    private void requestPackList(){
+    public void requestPackList(){
         listRequested = true;
         connection.sendMessage(botUser.getNick(), "XDCC SEND 1");
     }
