@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 import java.util.List;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import org.jibble.pircbot.User;
 
@@ -37,8 +38,13 @@ public class BotPanel extends javax.swing.JPanel{
         this.botLeecher = botLeecher;
         this.botLeecher.addListener(new BotListener(){
             @Override
-            public void packListLoaded(List<Pack> packList) {
-                packTable.setModel(new PackTableModel(packList));
+            public void packListLoaded(final List<Pack> packList) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        packTable.setModel(new PackTableModel(packList));
+                    }
+                });  
             }
         });
         this.packSpinner.setValue(2);
@@ -63,11 +69,13 @@ public class BotPanel extends javax.swing.JPanel{
         transferStatusBar = new javax.swing.JProgressBar();
         jScrollPane1 = new javax.swing.JScrollPane();
         packTable = new javax.swing.JTable();
+        refreshButton = new javax.swing.JButton();
 
         botScrollPane.setViewportView(botTextPane);
 
         packSpinner.setValue(1);
 
+        startButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/control_play.png"))); // NOI18N
         startButton.setText("Start");
         startButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -94,6 +102,14 @@ public class BotPanel extends javax.swing.JPanel{
         });
         jScrollPane1.setViewportView(packTable);
 
+        refreshButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/arrow_refresh.png"))); // NOI18N
+        refreshButton.setText("Refresh");
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -103,6 +119,8 @@ public class BotPanel extends javax.swing.JPanel{
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(refreshButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(startButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(packSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -116,9 +134,10 @@ public class BotPanel extends javax.swing.JPanel{
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(startButton)
-                    .addComponent(packSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(packSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(refreshButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(botScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -147,6 +166,10 @@ private void packTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         }
     }
 }//GEN-LAST:event_packTableMouseClicked
+
+private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
+    botLeecher.requestPackList();
+}//GEN-LAST:event_refreshButtonActionPerformed
 
 private class UpdateListerner implements ActionListener {
     private final NumberFormat formatter;
@@ -192,6 +215,7 @@ private class UpdateListerner implements ActionListener {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSpinner packSpinner;
     private javax.swing.JTable packTable;
+    private javax.swing.JButton refreshButton;
     private javax.swing.JButton startButton;
     private javax.swing.JProgressBar transferStatusBar;
     // End of variables declaration//GEN-END:variables

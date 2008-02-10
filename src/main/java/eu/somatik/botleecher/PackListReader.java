@@ -106,6 +106,8 @@ public class PackListReader {
             multiplier = 1024;
         } else if (suffix.equals("K")) {
             multiplier = 1;
+        } else if (suffix.equals("G")) {
+            multiplier = 1024 * 1024;
         } else {
             System.err.println("Unknown size suffix: " + suffix + " in " + sizePart);
         }
