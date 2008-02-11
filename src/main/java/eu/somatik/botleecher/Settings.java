@@ -5,6 +5,7 @@
 package eu.somatik.botleecher;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
@@ -28,18 +29,40 @@ public class Settings {
         if (folder != null) {
             saveFolder = new File(folder);
         }else{
-            //TODO ask user?
+            File userHome = new File(System.getProperty("user.home"));
+            File newFolder = new File(userHome,"downloads");
+            if(!newFolder.exists()){
+                newFolder.mkdir();
+            }
+            configFile.setProperty(PROP_SAVEFOLDER, newFolder.getAbsolutePath());
+            saveConfig(configFile);
         }
         return saveFolder;
+    }
+    
+    private String getConfigFilePath(){
+        String path = System.getProperty("user.home");
+        path += File.separator + CONFIG;
+        return path;
     }
 
     private Properties loadConfig() {
         Properties configFile = new Properties();
+        FileInputStream fis = null;
         try {
-            configFile.load(this.getClass().getClassLoader().getResourceAsStream(CONFIG));
+            fis = new FileInputStream(getConfigFilePath());
+            configFile.load(fis);
         } catch (IOException ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.INFO, "properties file not found, generating new one", ex);
+            Logger.getLogger(Settings.class.getName()).log(Level.INFO, "properties file not found, generating new one");
             createConfig();
+        } finally {
+            if(fis != null){
+                try {
+                    fis.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
         return configFile;
     }
@@ -52,7 +75,7 @@ public class Settings {
     private void saveConfig(Properties configFile) {
         FileWriter writer = null;
         try {
-            writer = new FileWriter(CONFIG);
+            writer = new FileWriter(getConfigFilePath());
             configFile.store(writer, "botleecher configuration file");
         } catch (IOException ex1) {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex1);
