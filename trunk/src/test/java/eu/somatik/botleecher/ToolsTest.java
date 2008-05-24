@@ -25,7 +25,6 @@ public class ToolsTest {
     public void testCreateImageIcon() {
         String path = "/icons/cancel.png";
         String description = "cancel icon";
-        ImageIcon expResult = null;
         ImageIcon result = Tools.createImageIcon(path, description);
         assertNotNull(result);
     }
