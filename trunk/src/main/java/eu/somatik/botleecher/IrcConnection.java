@@ -1,5 +1,6 @@
 package eu.somatik.botleecher;
 
+import eu.somatik.botleecher.service.NicknameProviderImpl;
 import org.jibble.pircbot.*;
 import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
@@ -16,13 +17,7 @@ import java.util.Vector;
  * @author francisdb
  */
 public class IrcConnection extends PircBot {
-    private static final String[] NICKS = {
-        "spidaboy", "slickerz", "dumpoli", "moeha", "catonia", "pipolipo",
-        "omgsize", "toedter", "skyhigh", "rumsound", "mathboy", "shaderz",
-        "poppp", "roofly", "ruloman", "seenthis", "tiptopi", "dreamoff",
-        "supergaai", "appeltje", "izidor", "tantila", "artbox", "doedoe",
-        "almari", "sikaru", "lodinka"
-    };
+
     
     private final List<IrcConnectionListener> listeners;
     private PropertyChangeSupport propertyChangeSupport;
@@ -33,11 +28,13 @@ public class IrcConnection extends PircBot {
     public IrcConnection() {
         super();
         
+        NicknameProviderImpl nickProvider = new NicknameProviderImpl();
+        
         this.leechers = Collections.synchronizedMap(new HashMap<String,BotLeecher>());
         this.listeners = new Vector<IrcConnectionListener>();
-        this.setLogin(createRandomNick());
-        this.setName(createRandomNick());
-        this.setFinger(createRandomNick());
+        this.setLogin(nickProvider.generateRandomNick());
+        this.setName(nickProvider.generateRandomNick());
+        this.setFinger(nickProvider.generateRandomNick());
         this.setVersion("xxx");
         this.setAutoNickChange(true);
         this.setVerbose(true);
@@ -81,9 +78,7 @@ public class IrcConnection extends PircBot {
         listeners.remove(listener);
     }
     
-    private String createRandomNick() {
-        return NICKS[(int) (Math.random() * NICKS.length)];
-    }
+   
     
     /**
      *
@@ -93,6 +88,7 @@ public class IrcConnection extends PircBot {
      * @param hostname
      * @param message
      */
+    @Override
     public void onMessage(String channel, String sender, String login,
             String hostname, String message) {
         if (message.equalsIgnoreCase("time")) {
@@ -109,11 +105,12 @@ public class IrcConnection extends PircBot {
      * @param target
      * @param notice
      */
+    @Override
     public void onNotice(String sourceNick, String sourceLogin,
             String sourceHostname, String target, String notice) {
         BotLeecher leecher = leechers.get(sourceNick);
         if(leecher != null){
-            leechers.get(sourceNick).onNotice(sourceNick, sourceLogin, sourceHostname, target, notice);
+            leecher.onNotice(sourceNick, sourceLogin, sourceHostname, target, notice);
         }
     }
     
@@ -121,6 +118,7 @@ public class IrcConnection extends PircBot {
      *
      * @param transfer
      */
+    @Override
     public void onIncomingFileTransfer(DccFileTransfer transfer) {
         leechers.get(transfer.getNick()).onIncomingFileTransfer(transfer);
     }
@@ -130,6 +128,7 @@ public class IrcConnection extends PircBot {
      * @param transfer
      * @param ex
      */
+    @Override
     protected void onFileTransferFinished(DccFileTransfer transfer, Exception ex) {
         leechers.get(transfer.getNick()).onFileTransferFinished(transfer, ex);
     }
@@ -139,6 +138,7 @@ public class IrcConnection extends PircBot {
      * @param channel
      * @param users
      */
+    @Override
     protected void onUserList(String channel, User[] users) {
         Arrays.sort(users, new UserComparator());
         for (IrcConnectionListener listener : listeners) {
@@ -147,6 +147,7 @@ public class IrcConnection extends PircBot {
     }
     
     private class UserComparator implements Comparator<User>{
+        @Override
         public int compare(User o1, User o2) {
             return o1.getNick().compareToIgnoreCase(o2.getNick());
         }
@@ -156,6 +157,7 @@ public class IrcConnection extends PircBot {
     /**
      *
      */
+    @Override
     protected void onDisconnect() {
         System.out.println("DISCONNECT:\tDisconnected from server");
         for (IrcConnectionListener listener : listeners) {
