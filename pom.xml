@@ -30,7 +30,8 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>0.9.9</version>
-            <scope>runtime</scope>
+            <!-- TODO enable (breaks running in netbeans atm) -->
+            <!--<scope>runtime</scope>-->
         </dependency>
     </dependencies>
     

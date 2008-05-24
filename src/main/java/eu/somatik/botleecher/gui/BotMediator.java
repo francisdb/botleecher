@@ -8,6 +8,8 @@
  */
 package eu.somatik.botleecher.gui;
 
+import eu.somatik.botleecher.tools.TextWriter;
+import eu.somatik.botleecher.tools.DualOutputStream;
 import eu.somatik.botleecher.*;
 import java.awt.Cursor;
 import org.jibble.pircbot.User;
@@ -27,9 +29,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author francisdb
  */
-public class BotMediator implements IrcConnectionListener {
+public class BotMediator implements IrcConnectionListener, TextWriter {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(BotLeecher.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BotMediator.class);
     
     private IrcConnection icrConnection;
     private LeecherFrame leecherFrame;
@@ -49,7 +51,7 @@ public class BotMediator implements IrcConnectionListener {
         });
         
         PrintStream oldStream = System.out;
-        PrintStream aPrintStream  = new PrintStream(new FilteredStream(oldStream));
+        PrintStream aPrintStream  = new PrintStream(new DualOutputStream(oldStream, this));
         System.setOut(aPrintStream); // catches System.out messages
         System.setErr(aPrintStream); // catches error messages
     }
@@ -76,21 +78,26 @@ public class BotMediator implements IrcConnectionListener {
         new BotMediator();
     }
     
+    @Override
     public void userListLoaded(final String channel, final  User[] users) {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 leecherFrame.setUsers(users);
             }
         });
-    }    
-    
-    private void writeToLog(final String message) {
+    }
+
+    @Override
+    public void writeText(final String text) {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                leecherFrame.writeToLog(message);
+                leecherFrame.writeToLog(text);
             }
         });
     }
+    
     
     /**
      * Connects to the irc network
@@ -113,6 +120,7 @@ public class BotMediator implements IrcConnectionListener {
             // TODO show hourglass to user
         }
         
+        @Override
         protected String doInBackground() throws Exception {
             icrConnection.connect(server);
             icrConnection.joinChannel(channel);
@@ -144,32 +152,6 @@ public class BotMediator implements IrcConnectionListener {
         return icrConnection;
     }
     
-    /**
-     * @author francisdb
-     *
-     * Class that will replace the System.out
-     * Writes to the old stream and to our debug window
-     */
-    private class FilteredStream extends FilterOutputStream {
-        private PrintStream oldStream;
-        
-        public FilteredStream(PrintStream oldStream) {
-            super(new ByteArrayOutputStream());
-            this.oldStream = oldStream;
-        }
-        
-        public void write(byte[] b) throws IOException {
-            String aString = new String(b);
-            writeToLog(aString);
-            oldStream.write(b);
-        }
-        
-        public void write(byte[] b, int off, int len) throws IOException {
-            String aString = new String(b, off, len);
-            writeToLog(aString);
-            oldStream.write(b, off, len);
-        }
-    }
 
     @Override
     public void disconnected() {
