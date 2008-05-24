@@ -9,6 +9,7 @@
 
 package eu.somatik.botleecher;
 
+import eu.somatik.botleecher.service.SettingsImpl;
 import eu.somatik.botleecher.model.Pack;
 import eu.somatik.botleecher.model.PackStatus;
 import java.io.File;
@@ -16,19 +17,21 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
-import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jibble.pircbot.DccFileTransfer;
 import org.jibble.pircbot.User;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author francisdb
  */
 public class BotLeecher {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(BotLeecher.class);
     
     private User botUser;
     
@@ -104,7 +107,7 @@ public class BotLeecher {
             }
         }else{
             curentTransfer = transfer;
-            Settings settings = new Settings();
+            SettingsImpl settings = new SettingsImpl();
             // TODO create subfolder per bot
             File saveFile = new File(settings.getSaveFolder(), transfer.getFile().getName());
             System.out.println("INCOMING:\t" + transfer.getFile().toString() + " " +
@@ -289,7 +292,7 @@ public class BotLeecher {
             try {
                 Thread.sleep(200);
             } catch (InterruptedException ex) {
-                Logger.getLogger(BotLeecher.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error("Thread sleep interrupted", ex);
             }
         }
     }
@@ -312,7 +315,7 @@ public class BotLeecher {
                     requestPack(pack.getId());
                 } catch (InterruptedException ex) {
                     running = false;
-                    Logger.getLogger(BotLeecher.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.error("QueueThread interrupted", ex);
                 }
             }
         }

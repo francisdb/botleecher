@@ -2,26 +2,30 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package eu.somatik.botleecher;
+package eu.somatik.botleecher.service;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  *
  * @author fdb
  */
-public class Settings {
+public class SettingsImpl implements Settings {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(SettingsImpl.class);
 
-    private static final String CONFIG = "botleecher.properties";
+    private static final String CONFIG_FILE_NAME = "botleecher.properties";
     
     private static final String PROP_SAVEFOLDER = "savefolder";
 
+    @Override
     public File getSaveFolder() {
         File saveFolder = null;
         Properties configFile = loadConfig();
@@ -42,7 +46,7 @@ public class Settings {
     
     private String getConfigFilePath(){
         String path = System.getProperty("user.home");
-        path += File.separator + CONFIG;
+        path += File.separator + CONFIG_FILE_NAME;
         return path;
     }
 
@@ -53,14 +57,14 @@ public class Settings {
             fis = new FileInputStream(getConfigFilePath());
             configFile.load(fis);
         } catch (IOException ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.INFO, "properties file not found, generating new one");
+            LOGGER.error("properties file not found, generating new one",ex);
             createConfig();
         } finally {
             if(fis != null){
                 try {
                     fis.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.error("Could not close the FileInputStream", ex);
                 }
             }
         }
@@ -77,14 +81,14 @@ public class Settings {
         try {
             writer = new FileWriter(getConfigFilePath());
             configFile.store(writer, "botleecher configuration file");
-        } catch (IOException ex1) {
-            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex1);
+        } catch (IOException ex) {
+            LOGGER.error("Error writing properties to file", ex);
         } finally {
             if (writer != null) {
                 try {
                     writer.close();
-                } catch (IOException ex1) {
-                    Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex1);
+                } catch (IOException ex) {
+                    LOGGER.error("Could not close the FileWriter", ex);
                 }
             }
         }

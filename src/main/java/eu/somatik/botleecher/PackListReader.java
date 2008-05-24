@@ -8,6 +8,7 @@
  */
 package eu.somatik.botleecher;
 
+import eu.somatik.botleecher.service.SettingsImpl;
 import eu.somatik.botleecher.model.Pack;
 import eu.somatik.botleecher.model.PackStatus;
 import java.io.BufferedReader;
@@ -37,8 +38,8 @@ public class PackListReader {
     }
 
     private void readPacks() {
-        List<Pack> packs = new ArrayList<Pack>();
-        List<String> messages = new ArrayList<String>();
+        List<Pack> newPacks = new ArrayList<Pack>();
+        List<String> newMessages = new ArrayList<String>();
 
         try {
             BufferedReader in = new BufferedReader(new FileReader(listFile));
@@ -48,9 +49,9 @@ public class PackListReader {
                 if (str.trim().startsWith("#")) {
                     pack = readPackLine(str);
                     checkExists(pack);
-                    packs.add(pack);
+                    newPacks.add(pack);
                 } else {
-                    messages.add(str);
+                    newMessages.add(str);
                 }
             }
             in.close();
@@ -58,12 +59,12 @@ public class PackListReader {
             e.printStackTrace();
         }
 
-        this.packs = Collections.unmodifiableList(packs);
-        this.messages = Collections.unmodifiableList(messages);
+        this.packs = Collections.unmodifiableList(newPacks);
+        this.messages = Collections.unmodifiableList(newMessages);
     }
     
     private void checkExists(Pack pack){
-        Settings settings = new Settings();
+        SettingsImpl settings = new SettingsImpl();
         File saveFolder = settings.getSaveFolder();
         File packFile = new File(saveFolder, pack.getName());
         if(packFile.exists()){
