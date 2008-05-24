@@ -21,10 +21,21 @@
             <artifactId>pircbot</artifactId>
             <version>1.4.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>0.9.9</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
     
     <build>
-        <defaultGoal>compile</defaultGoal>
+        <!--<defaultGoal>compile</defaultGoal>-->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -38,63 +49,21 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <executions>
+                <!--<executions>
                     <execution>
                         <goals>
-                            <goal>java</goal>
+                            <goal>exec</goal>
                         </goals>
                     </execution>
-                </executions>
+                </executions>-->
                 
                 <configuration>
-                    <mainClass>eeu.somatik.botleecher.gui.BotMediator</mainClass>
+                    <mainClass>eu.somatik.botleecher.gui.BotMediator</mainClass>
                 </configuration>
             </plugin>
         </plugins>
         
     </build>
     
-    <profiles>
-        <profile>
-            <id>netbeans-public</id>
-            <activation>
-                <property>
-                    <name>netbeans.execution</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <addClasspath>true</addClasspath>
-                                    <classpathPrefix>lib</classpathPrefix>
-                                    <mainClass>eu.somatik.botleecher.gui.BotMediator</mainClass>
-                                </manifest>
-                            </archive>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>nb</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>directory</goal>
-                                </goals>
-                                <configuration>
-                                    <descriptor>${basedir}/src/main/assemblies/netbeans-run.xml</descriptor>
-                                    <finalName>executable</finalName>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+   
 </project>
