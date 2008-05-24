@@ -13,9 +13,7 @@ import eu.somatik.botleecher.tools.DualOutputStream;
 import eu.somatik.botleecher.*;
 import java.awt.Cursor;
 import org.jibble.pircbot.User;
-import java.io.ByteArrayOutputStream;
-import java.io.FilterOutputStream;
-import java.io.IOException;
+
 import java.io.PrintStream;
 import java.util.concurrent.ExecutionException;
 import javax.swing.SwingUtilities;
@@ -42,6 +40,7 @@ public class BotMediator implements IrcConnectionListener, TextWriter {
         icrConnection.addBotListener(this);
         
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 leecherFrame = new LeecherFrame(BotMediator.this);
                 // center

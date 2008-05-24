@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
     <modelVersion>4.0.0</modelVersion>
-    
     <groupId>eu.somatik</groupId>
     <artifactId>botleecher</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>botleecher</name>
     <description>Tool to download from IRC bots</description>
     <url>http://www.somatik.eu</url>
-    
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -34,7 +32,6 @@
             <!--<scope>runtime</scope>-->
         </dependency>
     </dependencies>
-    
     <build>
         <!--<defaultGoal>compile</defaultGoal>-->
         <plugins>
@@ -46,7 +43,17 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
-            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>eu.somatik.botleecher.gui.BotMediator</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -57,14 +64,10 @@
                         </goals>
                     </execution>
                 </executions>-->
-                
                 <configuration>
                     <mainClass>eu.somatik.botleecher.gui.BotMediator</mainClass>
                 </configuration>
             </plugin>
         </plugins>
-        
     </build>
-    
-   
 </project>
