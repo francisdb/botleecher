@@ -19,6 +19,8 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -26,6 +28,9 @@ import javax.swing.UIManager;
  * @author francisdb
  */
 public class BotMediator implements IrcConnectionListener {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(BotLeecher.class);
+    
     private IrcConnection icrConnection;
     private LeecherFrame leecherFrame;
     
@@ -65,7 +70,7 @@ public class BotMediator implements IrcConnectionListener {
                     UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOGGER.error("Could not set system look and feel",ex);
         }
         
         new BotMediator();
@@ -114,17 +119,18 @@ public class BotMediator implements IrcConnectionListener {
             return null;
         }
         
+        @Override
         protected void done() {
             try {
                 get();
             } catch (ExecutionException ex) {
                 leecherFrame.setContolsActivated(true);
                 leecherFrame.showException(ex.getCause().getClass().getSimpleName()+": "+ex.getCause().getMessage());
-                ex.getCause().printStackTrace();
+                LOGGER.error("Could not connect & join channel",ex.getCause());
             } catch (InterruptedException ex) {
                 leecherFrame.setContolsActivated(true);
                 leecherFrame.showException(ex.getClass().getSimpleName()+": "+ex.getMessage());
-                ex.printStackTrace();
+                LOGGER.error("Connect worker interrupted", ex);
             }finally{
                 leecherFrame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }

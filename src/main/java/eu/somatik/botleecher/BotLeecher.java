@@ -96,14 +96,13 @@ public class BotLeecher {
      * @param transfer
      */
     public void onIncomingFileTransfer(DccFileTransfer transfer) {
-        
         if(listRequested){
             try         {
                 listFile = java.io.File.createTempFile("list", botUser.getNick());
                 listFile.deleteOnExit();
                 transfer.receive(listFile, false);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                LOGGER.error("Error while receiving file!", ex);
             }
         }else{
             curentTransfer = transfer;

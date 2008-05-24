@@ -18,12 +18,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author francisdb
  */
 public class PackListReader {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(BotLeecher.class);
 
     private File listFile;
     private List<Pack> packs;
@@ -55,8 +59,8 @@ public class PackListReader {
                 }
             }
             in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            LOGGER.error("Could not read packet file!", ex);
         }
 
         this.packs = Collections.unmodifiableList(newPacks);
