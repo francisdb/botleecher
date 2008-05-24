@@ -109,18 +109,18 @@ public class BotLeecher {
             SettingsImpl settings = new SettingsImpl();
             // TODO create subfolder per bot
             File saveFile = new File(settings.getSaveFolder(), transfer.getFile().getName());
-            System.out.println("INCOMING:\t" + transfer.getFile().toString() + " " +
+            LOGGER.info("INCOMING:\t" + transfer.getFile().toString() + " " +
                     transfer.getSize() + " bytes");
             
             //if file exists cut one 8bytes off to make transfer go on
             if (saveFile.exists() && (transfer.getSize() == saveFile.length())) {
-                System.out.println("EXISTS:\t try to close connection");
+                LOGGER.info("EXISTS:\t try to close connection");
                 transfer.close();
                 requestNext();
                 
                 //FileImageInputStream fis = new FileInputStream
             } else {
-                System.out.println("SAVING TO:\t" + saveFile.toString());
+                LOGGER.info("SAVING TO:\t" + saveFile.toString());
                 transfer.receive(saveFile, true);
             }
         }
@@ -146,12 +146,12 @@ public class BotLeecher {
     public void onNotice(String sourceNick, String sourceLogin,
             String sourceHostname, String target, String notice) {
         if (notice.contains("Invalid Pack Number")) {
-            System.out.println("DONE LEECHING BOT "+botUser.getNick());
+            LOGGER.info("DONE LEECHING BOT "+botUser.getNick());
             leeching = false;
         }
         
         if (notice.contains("point greater")) {
-            System.out.println("EXISTS:\t try to close connection");
+            LOGGER.info("EXISTS:\t try to close connection");
             
             curentTransfer.close();
             //this.sendMessage(botName,"XDCC remove");
@@ -160,7 +160,7 @@ public class BotLeecher {
         
         if(notice.contains("Closing Connection: Pack file changed")){
             // TODO do something here (retry?)
-            System.out.println("PACK file changed");
+            LOGGER.info("PACK file changed");
         }
         
         lastNotice = notice;
@@ -178,7 +178,7 @@ public class BotLeecher {
         }
         curentTransfer = null;
         if(listRequested){
-            System.out.println("LIST:\t List received for "+transfer.getNick());
+            LOGGER.info("LIST:\t List received for "+transfer.getNick());
             listRequested = false;
             PackListReader reader = new PackListReader(listFile);
             for(String message:reader.getMessages()){
@@ -189,7 +189,7 @@ public class BotLeecher {
                 listener.packListLoaded(packs);
             }
         }else{
-            System.out.println("FINISHED:\t Transfer finished for "+transfer.getFile().getName());
+            LOGGER.info("FINISHED:\t Transfer finished for "+transfer.getFile().getName());
             downloading = false;
             if(leeching){
                 requestNext();

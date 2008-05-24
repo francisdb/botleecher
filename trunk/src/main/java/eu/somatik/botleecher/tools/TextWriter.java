@@ -11,6 +11,10 @@ package eu.somatik.botleecher.tools;
  */
 public interface TextWriter {
     
+    /**
+     * Write some text
+     * @param text
+     */
     void writeText(String text);
 
 }
