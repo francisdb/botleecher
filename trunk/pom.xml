@@ -4,7 +4,7 @@
     <groupId>eu.somatik.botleecher</groupId>
     <artifactId>botleecher</artifactId>
     <version>0.6-SNAPSHOT</version>
-    <name>botleecher</name>
+    <name>Botleecher</name>
     <description>Tool to download from IRC bots</description>
     <url>http://www.somatik.eu</url>
     <scm>
