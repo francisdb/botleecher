@@ -2,14 +2,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.somatik.botleecher</groupId>
     <artifactId>botleecher</artifactId>
-    <version>0.8</version>
+    <version>0.9-SNAPSHOT</version>
     <name>Botleecher</name>
     <description>Tool to download from IRC bots</description>
     <url>http://www.somatik.eu</url>
     <scm>
-        <connection>scm:svn:http://botleecher.googlecode.com/svn/tags/botleecher-0.8</connection>
-        <developerConnection>scm:svn:https://botleecher.googlecode.com/svn/tags/botleecher-0.8</developerConnection>
-        <url>http://code.google.com/p/botleecher/source/browse/tags/botleecher-0.8</url>
+        <connection>scm:svn:http://botleecher.googlecode.com/svn/trunk/</connection>
+        <developerConnection>scm:svn:https://botleecher.googlecode.com/svn/trunk/</developerConnection>
+        <url>http://code.google.com/p/botleecher/source/browse</url>
     </scm>
     <dependencies>
         <dependency>
