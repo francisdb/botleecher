@@ -56,6 +56,10 @@ public class LeecherFrame extends javax.swing.JFrame {
         botListPanel = new javax.swing.JPanel();
         botListScrollPane = new javax.swing.JScrollPane();
         botList = new javax.swing.JList();
+        menuBar = new javax.swing.JMenuBar();
+        fileMenu = new javax.swing.JMenu();
+        optionsItem = new javax.swing.JMenuItem();
+        exitItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Botleecher");
@@ -116,7 +120,7 @@ public class LeecherFrame extends javax.swing.JFrame {
                     .addComponent(roomComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(connectButton)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         botListPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Bots"));
@@ -141,9 +145,26 @@ public class LeecherFrame extends javax.swing.JFrame {
         botListPanelLayout.setVerticalGroup(
             botListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(botListPanelLayout.createSequentialGroup()
-                .addComponent(botListScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
+                .addComponent(botListScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)
                 .addContainerGap())
         );
+
+        fileMenu.setText("File");
+
+        optionsItem.setText("Options");
+        fileMenu.add(optionsItem);
+
+        exitItem.setText("Exit");
+        exitItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(exitItem);
+
+        menuBar.add(fileMenu);
+
+        setJMenuBar(menuBar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -167,7 +188,7 @@ public class LeecherFrame extends javax.swing.JFrame {
                     .addComponent(serverPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(botListPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -219,6 +240,12 @@ private void botListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
 private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
     mediator.connect();
 }//GEN-LAST:event_connectButtonActionPerformed
+
+private void exitItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitItemActionPerformed
+    mediator.getIcrConnection().shutdown();
+    setVisible(false);
+    dispose();
+}//GEN-LAST:event_exitItemActionPerformed
 
 /**
  *
@@ -278,8 +305,12 @@ public void setUsers(User[] users){
     private javax.swing.JPanel botListPanel;
     private javax.swing.JScrollPane botListScrollPane;
     private javax.swing.JButton connectButton;
+    private javax.swing.JMenuItem exitItem;
+    private javax.swing.JMenu fileMenu;
     private javax.swing.JScrollPane logScrollPane;
     private javax.swing.JTextArea logTextArea;
+    private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenuItem optionsItem;
     private javax.swing.JComboBox roomComboBox;
     private javax.swing.JLabel roomLabel;
     private javax.swing.JComboBox serverComboBox;

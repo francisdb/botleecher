@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -17,6 +19,8 @@ import java.util.Vector;
  * @author francisdb
  */
 public class IrcConnection extends PircBot {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(BotLeecher.class);
 
     
     private final List<IrcConnectionListener> listeners;
@@ -59,6 +63,14 @@ public class IrcConnection extends PircBot {
      */
     public BotLeecher getBotLeecher(String botName){
         return leechers.get(botName);
+    }
+    
+    public void shutdown(){
+        LOGGER.info("Shutting down all leechers");
+        for(BotLeecher leecher:leechers.values()){
+            leecher.shutdown();
+        }
+        disconnect();
     }
     
     /**

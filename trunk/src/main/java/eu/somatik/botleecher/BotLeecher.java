@@ -56,6 +56,8 @@ public class BotLeecher {
     private List<BotListener> listeners;
     
     private final BlockingQueue<Pack> queue;
+    
+    private final QueueThread thread;
    
     
     
@@ -74,7 +76,8 @@ public class BotLeecher {
         this.listeners = new Vector<BotListener>();
         this.queue = new LinkedBlockingQueue<Pack>();
         requestPackList();
-        new QueueThread().start();
+        this.thread = new QueueThread();
+        this.thread.start();
     }
     
     public void requestPackList(){
@@ -304,10 +307,26 @@ public class BotLeecher {
         requestPack(counter);
     }
     
+    public void shutdown(){
+        this.thread.shutdown();
+    }
+    
     private class QueueThread extends Thread{
+        private boolean running;
+
+        public QueueThread() {
+            super("QueueThread."+botUser.getNick());
+            this.running = true;
+        }
+        
+        public void shutdown(){
+            LOGGER.info("shutting down %", getName());
+            this.running = false;
+        }
+        
+        
         @Override
         public void run() {
-            boolean running = true;
             while(running){
                 try {
                     Pack pack = queue.take();
