@@ -146,6 +146,7 @@ public class BotMediator implements IrcConnectionListener, TextWriter {
     
     /**
      * Todo refactor, this should stay private
+     * @return 
      */
     protected IrcConnection getIcrConnection(){
         return icrConnection;

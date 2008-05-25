@@ -15,8 +15,6 @@ import static org.junit.Assert.*;
  */
 public class ToolsTest {
 
-    public ToolsTest() {
-    }
 
     /**
      * Test of createImageIcon method, of class Tools.
