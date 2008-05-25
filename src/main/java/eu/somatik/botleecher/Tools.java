@@ -16,7 +16,11 @@ public class Tools {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(BotLeecher.class);
 
-    /** Returns an ImageIcon, or null if the path was invalid. */
+    /** Returns an ImageIcon, or null if the path was invalid.
+     * @param path 
+     * @param description
+     * @return
+     */
     public static ImageIcon createImageIcon(String path, String description) {
         java.net.URL imgURL = Tools.class.getResource(path);
         if (imgURL != null) {

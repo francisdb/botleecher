@@ -16,6 +16,11 @@ public class DualOutputStream extends FilterOutputStream{
 
     private final TextWriter writer;
 
+    /**
+     * Filters an output stream and splits output to a TextWriter
+     * @param oldStream
+     * @param textWriter
+     */
     public DualOutputStream(PrintStream oldStream, TextWriter textWriter) {
         super(oldStream);
         this.writer = textWriter ;   
