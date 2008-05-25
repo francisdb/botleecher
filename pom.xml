@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>eu.somatik</groupId>
+    <groupId>eu.somatik.botleecher</groupId>
     <artifactId>botleecher</artifactId>
     <version>0.6-SNAPSHOT</version>
     <name>botleecher</name>
