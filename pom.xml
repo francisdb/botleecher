@@ -7,6 +7,11 @@
     <name>botleecher</name>
     <description>Tool to download from IRC bots</description>
     <url>http://www.somatik.eu</url>
+    <scm>
+        <connection>scm:svn:http://botleecher.googlecode.com/svn/trunk/</connection>
+        <developerConnection>scm:svn:https://botleecher.googlecode.com/svn/trunk/</developerConnection>
+        <url>http://code.google.com/p/botleecher/source/browse</url>
+    </scm>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
