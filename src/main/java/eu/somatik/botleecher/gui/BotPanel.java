@@ -182,7 +182,7 @@ private class UpdateListerner implements ActionListener {
         @Override
     public void actionPerformed(ActionEvent e) {
         if (botLeecher.getCurrentTransfer() != null) {
-            packSpinner.setValue(new Integer(botLeecher.getCounter()));
+            packSpinner.setValue(botLeecher.getCounter());
             transferStatusBar.setMaximum((int) botLeecher.getCurrentTransfer()
                     .getSize());
             transferStatusBar.setValue((int) botLeecher.getCurrentTransfer()
@@ -198,8 +198,8 @@ private class UpdateListerner implements ActionListener {
                     "Kbps \n" + "Last notice: " +
                     botLeecher.getLastNotice());
             
-            String percentage = formatter.format(botLeecher.getCurrentTransfer()
-                    .getProgressPercentage());
+            //String percentage = formatter.format(botLeecher.getCurrentTransfer()
+            //        .getProgressPercentage());
             //                setTitle(percentage + "% " +
             //                    botLeecher.getCurrentTransfer().getFile().getName());
         } else {
