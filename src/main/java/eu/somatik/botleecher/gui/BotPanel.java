@@ -150,7 +150,7 @@ private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
     startButton.setEnabled(false);
     
     botLeecher.setCounter((Integer)packSpinner.getValue());
-    botLeecher.start();
+    botLeecher.startLeeching();
 }//GEN-LAST:event_startButtonActionPerformed
 
 private void packTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_packTableMouseClicked
