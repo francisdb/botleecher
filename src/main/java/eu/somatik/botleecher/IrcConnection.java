@@ -1,8 +1,8 @@
 package eu.somatik.botleecher;
 
 import eu.somatik.botleecher.service.NicknameProviderImpl;
+import java.io.Serializable;
 import org.jibble.pircbot.*;
-import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -24,7 +24,7 @@ public class IrcConnection extends PircBot {
 
     
     private final List<IrcConnectionListener> listeners;
-    private PropertyChangeSupport propertyChangeSupport;
+    //private PropertyChangeSupport propertyChangeSupport;
     
     private Map<String,BotLeecher> leechers;
     
@@ -159,7 +159,7 @@ public class IrcConnection extends PircBot {
         }
     }
     
-    private class UserComparator implements Comparator<User>{
+    private static class UserComparator implements Comparator<User>, Serializable{
         @Override
         public int compare(User o1, User o2) {
             return o1.getNick().compareToIgnoreCase(o2.getNick());
