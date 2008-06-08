@@ -52,6 +52,7 @@ public class IrcConnection extends PircBot {
      */
     public BotLeecher makeLeecher(User user) {
         BotLeecher leecher = new BotLeecher(user, this);
+        leecher.start();
         leechers.put(user.getNick(),leecher);
         return leecher;
     }

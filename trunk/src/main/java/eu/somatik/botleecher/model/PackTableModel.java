@@ -18,6 +18,8 @@ import javax.swing.table.AbstractTableModel;
  */
 public class PackTableModel extends AbstractTableModel{
     
+    
+    
     private static final String[] COL_NAMES = {"#", "Status", "Name", "Size (K)", "Downloads"};
     private static final Class[] COL_TYPES = {Integer.class, PackStatus.class, String.class, Integer.class, Integer.class};
     

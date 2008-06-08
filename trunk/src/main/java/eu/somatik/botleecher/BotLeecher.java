@@ -75,8 +75,11 @@ public class BotLeecher {
         this.description = "";
         this.listeners = new Vector<BotListener>();
         this.queue = new LinkedBlockingQueue<Pack>();
-        requestPackList();
         this.thread = new QueueThread();
+    }
+    
+    public void start(){
+        requestPackList();
         this.thread.start();
     }
     
@@ -269,7 +272,7 @@ public class BotLeecher {
     /**
      *
      */
-    public void start(){
+    public void startLeeching(){
         leeching = true;
         requestNextPack();
     }
