@@ -84,6 +84,7 @@
                 <configuration>
                     <findbugsXmlOutput>true</findbugsXmlOutput>
                     <xmlOutput>true</xmlOutput>
+                    <omitVisitors>SerializableIdiom</omitVisitors>
                 </configuration>
             </plugin>
         </plugins>
