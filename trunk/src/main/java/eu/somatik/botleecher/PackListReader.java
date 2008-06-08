@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +47,9 @@ public class PackListReader {
         List<Pack> newPacks = new ArrayList<Pack>();
         List<String> newMessages = new ArrayList<String>();
 
+        BufferedReader in = null;
         try {
-            BufferedReader in = new BufferedReader(new FileReader(listFile));
+            in = new BufferedReader(new FileReader(listFile));
             String str;
             Pack pack;
             while ((str = in.readLine()) != null) {
@@ -62,6 +64,14 @@ public class PackListReader {
             in.close();
         } catch (IOException ex) {
             LOGGER.error("Could not read packet file!", ex);
+        } finally{
+            if(in != null){
+                try {
+                    in.close();
+                } catch (IOException ex) {
+                    LOGGER.error("Colsing bufferen file reader failed", ex);
+                }
+            }
         }
 
         this.packs = Collections.unmodifiableList(newPacks);

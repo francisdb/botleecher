@@ -318,7 +318,7 @@ public class BotLeecher {
         private boolean running;
 
         public QueueThread() {
-            super("QueueThread."+botUser.getNick());
+            this.setName("QueueThread."+botUser.getNick());
             this.running = true;
         }
         
