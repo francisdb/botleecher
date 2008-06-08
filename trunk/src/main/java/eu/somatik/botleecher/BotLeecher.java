@@ -69,6 +69,7 @@ public class BotLeecher {
     public BotLeecher(User user, IrcConnection connection) {
         this.botUser = user;
         this.connection = connection;
+        this.curentTransfer = null;
         this.leeching = false;
         this.listRequested = false;
         this.lastNotice = "";
