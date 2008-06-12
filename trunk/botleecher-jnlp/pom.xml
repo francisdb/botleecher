@@ -21,7 +21,7 @@
 					<jnlp>
 						<outputFile>botleecher.jnlp</outputFile>
 						<mainClass>
-							eu.somatik.botleecher.gui.BotMediator
+							eu.somatik.botleecher.Main
 						</mainClass>
 					</jnlp>
 					<sign>
