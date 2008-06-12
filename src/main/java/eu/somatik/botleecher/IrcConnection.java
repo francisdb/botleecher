@@ -1,6 +1,8 @@
 package eu.somatik.botleecher;
 
-import eu.somatik.botleecher.service.NicknameProviderImpl;
+import com.google.inject.Inject;
+import eu.somatik.botleecher.service.BotLeecherFactory;
+import eu.somatik.botleecher.service.NicknameProvider;
 import java.io.Serializable;
 import org.jibble.pircbot.*;
 import java.util.Arrays;
@@ -28,17 +30,20 @@ public class IrcConnection extends PircBot {
     
     private Map<String,BotLeecher> leechers;
     
+    private final BotLeecherFactory botLeecherFactory;
+
+    
     /** Creates a new instance of Main */
-    public IrcConnection() {
+    @Inject
+    public IrcConnection(NicknameProvider nickProvider, BotLeecherFactory botLeecherFactory) {
         super();
-        
-        NicknameProviderImpl nickProvider = new NicknameProviderImpl();
+        this.botLeecherFactory = botLeecherFactory;
         
         this.leechers = Collections.synchronizedMap(new HashMap<String,BotLeecher>());
         this.listeners = new Vector<IrcConnectionListener>();
-        this.setLogin(nickProvider.generateRandomNick());
-        this.setName(nickProvider.generateRandomNick());
-        this.setFinger(nickProvider.generateRandomNick());
+        this.setLogin(nickProvider.getNickName());
+        this.setName(nickProvider.getNickName());
+        this.setFinger(nickProvider.getNickName());
         this.setVersion("xxx");
         this.setAutoNickChange(true);
         this.setVerbose(true);
@@ -51,7 +56,7 @@ public class IrcConnection extends PircBot {
      * @return 
      */
     public BotLeecher makeLeecher(User user) {
-        BotLeecher leecher = new BotLeecher(user, this);
+        BotLeecher leecher = botLeecherFactory.getBotLeecher(user, this);
         leecher.start();
         leechers.put(user.getNick(),leecher);
         return leecher;

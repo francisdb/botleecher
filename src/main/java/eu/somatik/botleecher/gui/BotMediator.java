@@ -8,9 +8,11 @@
  */
 package eu.somatik.botleecher.gui;
 
+import com.google.inject.Inject;
 import eu.somatik.botleecher.tools.TextWriter;
 import eu.somatik.botleecher.tools.DualOutputStream;
 import eu.somatik.botleecher.*;
+import eu.somatik.botleecher.service.ImageLoader;
 import java.awt.Cursor;
 import org.jibble.pircbot.User;
 
@@ -32,18 +34,21 @@ public class BotMediator implements IrcConnectionListener, TextWriter {
     private static final Logger LOGGER = LoggerFactory.getLogger(BotMediator.class);
     private IrcConnection icrConnection;
     private LeecherFrame leecherFrame;
+    private ImageLoader imageLoader;
 
+    
     /** Creates a new instance of BotMediator */
-    public BotMediator() {
-        icrConnection = new eu.somatik.botleecher.IrcConnection();
+    @Inject
+    public BotMediator(IrcConnection ircConnection, ImageLoader imageLoader) {
+        this.imageLoader = imageLoader;
+        icrConnection = ircConnection;
         icrConnection.addBotListener(this);
         leecherFrame = null;
-
-        PrintStream oldStream = System.out;
-        PrintStream aPrintStream = new PrintStream(new DualOutputStream(oldStream, this));
-        System.setOut(aPrintStream); // catches System.out messages
-        System.setErr(aPrintStream); // catches error messages
-
+    }
+    
+    public void start(){
+        initLookAndFeel();
+        redirectOutputStreams();
         startGuiOnEDT();
     }
 
@@ -51,18 +56,22 @@ public class BotMediator implements IrcConnectionListener, TextWriter {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                leecherFrame = new LeecherFrame(BotMediator.this);
+                leecherFrame = new LeecherFrame(BotMediator.this, imageLoader);
                 // center
                 leecherFrame.setLocationRelativeTo(null);
                 leecherFrame.setVisible(true);
             }
         });
     }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) throws ClassNotFoundException, InstantiationException {
+    
+    private void redirectOutputStreams(){
+        PrintStream oldStream = System.out;
+        PrintStream aPrintStream = new PrintStream(new DualOutputStream(oldStream, this));
+        System.setOut(aPrintStream); // catches System.out messages
+        System.setErr(aPrintStream); // catches error messages
+    }
+    
+    private void initLookAndFeel(){
         try {
             UIManager.LookAndFeelInfo[] lookAndFeels = UIManager.getInstalledLookAndFeels();
 
@@ -78,15 +87,16 @@ public class BotMediator implements IrcConnectionListener, TextWriter {
             LOGGER.error("Could not set system look and feel", ex);
         } catch (UnsupportedLookAndFeelException ex) {
             LOGGER.error("Could not set system look and feel", ex);
+        } catch(ClassNotFoundException ex){
+            LOGGER.error("Could not set system look and feel", ex);
+        }catch(InstantiationException ex){
+            LOGGER.error("Could not set system look and feel", ex);
         }
-
-        new BotMediator();
     }
 
     @Override
     public void userListLoaded(final String channel, final User[] users) {
         SwingUtilities.invokeLater(new Runnable() {
-
             @Override
             public void run() {
                 leecherFrame.setUsers(users);
@@ -96,13 +106,16 @@ public class BotMediator implements IrcConnectionListener, TextWriter {
 
     @Override
     public void writeText(final String text) {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                leecherFrame.writeToLog(text);
-            }
-        });
+        if(leecherFrame != null){
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    leecherFrame.writeToLog(text);
+                }
+            });
+        }else{
+            System.out.print(text);
+        }
     }
 
     /**

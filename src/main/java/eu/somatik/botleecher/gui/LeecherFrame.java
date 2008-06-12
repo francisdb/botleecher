@@ -5,9 +5,11 @@
  */
 package eu.somatik.botleecher.gui;
 
+import eu.somatik.botleecher.service.JarImageLoader;
 import eu.somatik.botleecher.gui.BotMediator;
 import eu.somatik.botleecher.*;
 import eu.somatik.botleecher.gui.BotPanel;
+import eu.somatik.botleecher.service.ImageLoader;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,14 +26,16 @@ import org.jibble.pircbot.User;
  */
 public class LeecherFrame extends javax.swing.JFrame {
 
-    private BotMediator mediator;
+    private final BotMediator mediator;
+    private final ImageLoader imageLoader;
 
     /**
      * Creates new form LeecherFrame
      * @param mediator
      */
-    public LeecherFrame(final BotMediator mediator) {
+    public LeecherFrame(final BotMediator mediator, final ImageLoader imageLoader) {
         initComponents();
+        this.imageLoader = imageLoader;
         this.mediator = mediator;
         logTextArea.setFont(new Font("monospaced", Font.PLAIN, 10));
     }
@@ -212,7 +216,7 @@ private void botListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
             JLabel nameLabel = new JLabel(tabName);
             nameLabel.setBorder(new EmptyBorder(0,0,0,0));
             tabHeader.add(nameLabel );
-            JButton closeButton = new JButton(Tools.createImageIcon("/icons/cancel.png","cancel icon"));
+            JButton closeButton = new JButton(imageLoader.loadImageIcon("/icons/cancel.png","cancel icon"));
             closeButton.setBorderPainted(false);
             closeButton.setBorder(new EmptyBorder(0,0,0,0));
             //closeButton.setPreferredSize(new Dimension(16, 16));

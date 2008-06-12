@@ -5,11 +5,14 @@
 
 package eu.somatik.botleecher.service;
 
+import com.google.inject.Singleton;
+
 /**
  *
  * @author fdb
  */
-public class NicknameProviderImpl implements NicknameProvider {
+@Singleton
+public class FixedListRandomNicknameProvider implements NicknameProvider {
     private static final String[] NICKS = {
         "spidaboy", "slickerz", "dumpoli", "moeha", "catonia", "pipolipo",
         "omgsize", "toedter", "skyhigh", "rumsound", "mathboy", "shaderz",
@@ -19,7 +22,7 @@ public class NicknameProviderImpl implements NicknameProvider {
     };
     
     @Override
-    public String generateRandomNick() {
+    public String getNickName() {
         return NICKS[(int) (Math.random() * NICKS.length)];
     }
 

@@ -1,16 +1,20 @@
 /*
- * PackListReader.java
+ * PackListReaderImpl.java
  *
  * Created on April 8, 2007, 10:01 PM
  *
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package eu.somatik.botleecher;
+package eu.somatik.botleecher.service;
 
-import eu.somatik.botleecher.service.SettingsImpl;
+import eu.somatik.botleecher.*;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import eu.somatik.botleecher.model.Pack;
+import eu.somatik.botleecher.model.PackList;
 import eu.somatik.botleecher.model.PackStatus;
+import eu.somatik.botleecher.service.Settings;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -18,7 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,26 +29,26 @@ import org.slf4j.LoggerFactory;
  *
  * @author francisdb
  */
-public class PackListReader {
+@Singleton
+public class PackListReaderImpl implements PackListReader {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(BotLeecher.class);
-
-    private File listFile;
-    private List<Pack> packs;
-    private List<String> messages;
-
+    
+    private Settings settings;
+    
     /** 
-     * Creates a new instance of PackListReader 
+     * Creates a new instance of PackListReaderImpl 
      * @param listFile 
      */
-    public PackListReader(File listFile) {
-        this.listFile = listFile;
-        readPacks();
+    @Inject
+    public PackListReaderImpl(Settings settings) {
+        this.settings = settings;
     }
 
-    private void readPacks() {
-        List<Pack> newPacks = new ArrayList<Pack>();
-        List<String> newMessages = new ArrayList<String>();
+    @Override
+    public PackList readPacks(File listFile) {
+        List<Pack> packs = new ArrayList<Pack>();
+        List<String> messages = new ArrayList<String>();
 
         BufferedReader in = null;
         try {
@@ -56,9 +59,9 @@ public class PackListReader {
                 if (str.trim().startsWith("#")) {
                     pack = readPackLine(str);
                     checkExists(pack);
-                    newPacks.add(pack);
+                    packs.add(pack);
                 } else {
-                    newMessages.add(str);
+                    messages.add(str);
                 }
             }
             in.close();
@@ -74,12 +77,10 @@ public class PackListReader {
             }
         }
 
-        this.packs = Collections.unmodifiableList(newPacks);
-        this.messages = Collections.unmodifiableList(newMessages);
+        return new PackList(packs, messages);
     }
     
     private void checkExists(Pack pack){
-        SettingsImpl settings = new SettingsImpl();
         File saveFolder = settings.getSaveFolder();
         File packFile = new File(saveFolder, pack.getName());
         if(packFile.exists()){
@@ -132,19 +133,4 @@ public class PackListReader {
         return calculatedSIze;
     }
 
-    /**
-     * 
-     * @return 
-     */
-    public List<Pack> getPacks() {
-        return packs;
-    }
-
-    /**
-     * 
-     * @return 
-     */
-    public List<String> getMessages() {
-        return messages;
-    }
 }

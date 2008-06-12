@@ -5,12 +5,15 @@
 
 package eu.somatik.botleecher.service;
 
+import eu.somatik.botleecher.model.PackList;
+import java.io.File;
+
 /**
  *
  * @author fdb
  */
-public interface NicknameProvider {
+public interface PackListReader {
 
-    String getNickName();
+    PackList readPacks(File listFile);
 
 }

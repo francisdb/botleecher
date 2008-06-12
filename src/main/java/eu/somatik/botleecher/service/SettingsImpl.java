@@ -4,6 +4,7 @@
  */
 package eu.somatik.botleecher.service;
 
+import com.google.inject.Singleton;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author fdb
  */
+@Singleton
 public class SettingsImpl implements Settings {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(SettingsImpl.class);
