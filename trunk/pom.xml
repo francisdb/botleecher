@@ -1,4 +1,4 @@
-
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.somatik.botleecher</groupId>
@@ -36,6 +36,12 @@
             <!-- TODO enable (breaks running in netbeans atm) -->
             <!--<scope>runtime</scope>-->
         </dependency>
+        <dependency>
+            <groupId>com.google.code.guice</groupId>
+            <artifactId>guice</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     <build>
         <!--<defaultGoal>compile</defaultGoal>-->
@@ -54,7 +60,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>eu.somatik.botleecher.gui.BotMediator</mainClass>
+                            <mainClass>eu.somatik.botleecher.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
