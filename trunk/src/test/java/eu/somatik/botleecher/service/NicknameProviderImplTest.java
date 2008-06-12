@@ -13,15 +13,15 @@ import static org.junit.Assert.*;
  *
  * @author fdb
  */
-public class NicknameProviderTest {
+public class NicknameProviderImplTest {
 
     /**
-     * Test of generateRandomNick method, of class NicknameProviderImpl.
+     * Test of getNickName method, of class FixedListRandomNicknameProvider.
      */
     @Test
     public void testGenerateRandomNick() {
-        NicknameProvider instance = new NicknameProviderImpl();
-        String result = instance.generateRandomNick();
+        NicknameProvider instance = new FixedListRandomNicknameProvider();
+        String result = instance.getNickName();
         assertFalse("Generated nickname is NULL", result == null);
         assertTrue("Generated nickname length == 0", result.length() > 0);
     }
