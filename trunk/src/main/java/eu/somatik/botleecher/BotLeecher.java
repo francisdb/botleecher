@@ -9,9 +9,12 @@
 
 package eu.somatik.botleecher;
 
-import eu.somatik.botleecher.service.SettingsImpl;
+import eu.somatik.botleecher.service.PackListReader;
+import com.google.inject.Inject;
 import eu.somatik.botleecher.model.Pack;
+import eu.somatik.botleecher.model.PackList;
 import eu.somatik.botleecher.model.PackStatus;
+import eu.somatik.botleecher.service.Settings;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -59,14 +62,19 @@ public class BotLeecher {
     
     private final QueueThread thread;
    
-    
+    private final Settings settings;
+    private final PackListReader packListReader;
     
     /**
      * Creates a new instance of BotLeecher
      * @param user
      * @param connection
      */
-    public BotLeecher(User user, IrcConnection connection) {
+    @Inject
+    public BotLeecher(User user, IrcConnection connection, final Settings settings, final PackListReader packListReader) {
+        this.settings = settings;
+        this.packListReader = packListReader;
+        
         this.botUser = user;
         this.connection = connection;
         this.curentTransfer = null;
@@ -113,7 +121,6 @@ public class BotLeecher {
             }
         }else{
             curentTransfer = transfer;
-            SettingsImpl settings = new SettingsImpl();
             // TODO create subfolder per bot
             File saveFile = new File(settings.getSaveFolder(), transfer.getFile().getName());
             LOGGER.info("INCOMING:\t" + transfer.getFile().toString() + " " +
@@ -187,11 +194,11 @@ public class BotLeecher {
         if(listRequested){
             LOGGER.info("LIST:\t List received for "+transfer.getNick());
             listRequested = false;
-            PackListReader reader = new PackListReader(listFile);
-            for(String message:reader.getMessages()){
+            PackList packList = packListReader.readPacks(listFile);
+            for(String message:packList.getMessages()){
                 this.description  += message + "\n";
             }
-            List<Pack> packs = Collections.unmodifiableList(reader.getPacks());
+            List<Pack> packs = Collections.unmodifiableList(packList.getPacks());
             for(BotListener listener:listeners){
                 listener.packListLoaded(packs);
             }

@@ -1,9 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package eu.somatik.botleecher;
+package eu.somatik.botleecher.service;
 
+import com.google.inject.Singleton;
+import eu.somatik.botleecher.*;
 import javax.swing.ImageIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +10,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author fdb
  */
-public class Tools {
+@Singleton
+public class JarImageLoader implements ImageLoader {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(BotLeecher.class);
 
@@ -21,8 +20,9 @@ public class Tools {
      * @param description
      * @return
      */
-    public static ImageIcon createImageIcon(String path, String description) {
-        java.net.URL imgURL = Tools.class.getResource(path);
+    @Override
+    public ImageIcon loadImageIcon(String path, String description) {
+        java.net.URL imgURL = JarImageLoader.class.getResource(path);
         if (imgURL != null) {
             return new ImageIcon(imgURL, description);
         } else {
