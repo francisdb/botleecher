@@ -188,7 +188,7 @@ public class BotLeecher {
      */
     public void onFileTransferFinished(DccFileTransfer transfer, Exception ex) {
         if (ex != null) {
-            System.out.println(ex.getClass().getName() + " -> " + ex.getMessage());
+            LOGGER.error(ex.getClass().getName() + " -> " + ex.getMessage(), ex);
         }
         curentTransfer = null;
         if(listRequested){
@@ -287,7 +287,7 @@ public class BotLeecher {
     
     public void queuePack(Pack pack){
         pack.setStatus(PackStatus.QUEUED);
-        System.out.println("Queued pack nr "+pack.getId());
+        LOGGER.info("Queued pack nr "+pack.getId());
         queue.add(pack);
     }
     

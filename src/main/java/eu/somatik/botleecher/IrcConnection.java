@@ -177,7 +177,7 @@ public class IrcConnection extends PircBot {
      */
     @Override
     protected void onDisconnect() {
-        System.out.println("DISCONNECT:\tDisconnected from server");
+        LOGGER.info("DISCONNECT:\tDisconnected from server");
         for (IrcConnectionListener listener : listeners) {
             listener.disconnected();
         }

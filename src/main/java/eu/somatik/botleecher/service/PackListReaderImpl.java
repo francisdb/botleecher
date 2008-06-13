@@ -126,7 +126,7 @@ public class PackListReaderImpl implements PackListReader {
         } else if (suffix.equals("G")) {
             multiplier = 1024 * 1024;
         } else {
-            System.err.println("Unknown size suffix: " + suffix + " in " + sizePart);
+            LOGGER.warn("Unknown size suffix: " + suffix + " in " + sizePart);
         }
         String size = clean.substring(0, clean.length() - 1);
         int calculatedSIze = (int) (Double.parseDouble(size) * multiplier);
