@@ -17,12 +17,16 @@ import java.util.List;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import org.jibble.pircbot.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author  francisdb
  */
 public class BotPanel extends javax.swing.JPanel{
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(BotPanel.class);
     
     private final User user;
     private final BotLeecher botLeecher;
@@ -162,7 +166,7 @@ private void packTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
         if(pack.getStatus() == PackStatus.AVAILABLE){
             botLeecher.queuePack(pack);
         }else{
-            System.err.println("Pack already queued or downloaded");
+            LOGGER.warn("Pack already queued or downloaded");
         }
     }
 }//GEN-LAST:event_packTableMouseClicked

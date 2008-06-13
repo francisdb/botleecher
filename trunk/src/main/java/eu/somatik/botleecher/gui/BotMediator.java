@@ -76,11 +76,11 @@ public class BotMediator implements IrcConnectionListener, TextWriter {
             UIManager.LookAndFeelInfo[] lookAndFeels = UIManager.getInstalledLookAndFeels();
 
             for (int i = 0; i < lookAndFeels.length; i++) {
-                System.out.println("Available lookAndFeel: " +
+                LOGGER.debug("Available lookAndFeel: " +
                         lookAndFeels[i].getClassName());
             }
 
-            System.out.println("Setting lookAndFeel: " +
+            LOGGER.info("Setting lookAndFeel: " +
                     UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (IllegalAccessException ex) {
@@ -114,7 +114,7 @@ public class BotMediator implements IrcConnectionListener, TextWriter {
                 }
             });
         }else{
-            System.out.print(text);
+            LOGGER.info(text);
         }
     }
 
