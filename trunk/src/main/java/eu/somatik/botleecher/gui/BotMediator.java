@@ -37,7 +37,10 @@ public class BotMediator implements IrcConnectionListener, TextWriter {
     private ImageLoader imageLoader;
 
     
-    /** Creates a new instance of BotMediator */
+    /** Creates a new instance of BotMediator
+     * @param ircConnection
+     * @param imageLoader 
+     */
     @Inject
     public BotMediator(IrcConnection ircConnection, ImageLoader imageLoader) {
         this.imageLoader = imageLoader;
