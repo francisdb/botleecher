@@ -32,7 +32,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>0.9.9</version>
+            <version>1.2.0</version>
             <!-- TODO enable (breaks running in netbeans atm) -->
             <!--<scope>runtime</scope>-->
         </dependency>
